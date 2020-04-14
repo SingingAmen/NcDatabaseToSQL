@@ -15,6 +15,8 @@ using System.Web.Services;
 
 namespace NcDatabaseToSQL
 {
+
+    //git管理测试
     /// <summary>
     /// NcDatabaseToSQL 的摘要说明
     /// </summary>
