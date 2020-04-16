@@ -4,12 +4,77 @@ using System.Xml;
 using System.Data.SqlClient;
 using System.Collections;
 using System.Configuration;
+using System.Linq;
 
 namespace NcDatabaseToSQL
 {
     public class SqlHelperForU8
     {
         private static string connectionString = ConfigurationManager.ConnectionStrings["U8DataConn"].ToString();
+
+
+        //当存储过程执行时间太长时，存储过程的默认超时时间是30s，需要设置存储过程执行超时时间
+        /// <summary>
+        /// 调用存储过程  (自定义超时时间)
+        /// </summary>
+        /// <param name="connStr">连接字符串</param>
+        /// <param name="storedProcedureName">存储过程名称</param>
+        /// <param name="commandOutTime">执行存储过程请求超时时间(单位：s)</param>
+        /// <param name="ResponseBool">存储过程执行状态</param>
+        /// <param name="ResponseMsg">执行存储过程状态描述</param>
+        /// <param name="paramsObject">存储过程输入参数</param>
+        /// <returns></returns>
+        public static DataSet Sql_GetStoredProcedureFunction(string connStr, string storedProcedureName, int commandOutTime, out bool ResponseBool, out string ResponseMsg, params ParameterKeyValuesEntity[] paramsObject)
+        {
+            DataSet ResponseDs = new DataSet();
+            ResponseBool = true;
+            ResponseMsg = "获取成功！";
+            try
+            {
+                using (SqlConnection sqlConn = new SqlConnection(connStr))
+                {
+                    sqlConn.Open();
+                    using (SqlCommand sqlCmd = new SqlCommand(storedProcedureName, sqlConn))
+                    {
+                        sqlCmd.CommandType = CommandType.StoredProcedure;
+                        sqlCmd.CommandTimeout = commandOutTime;
+                        if (paramsObject.Count() > 0)
+                        {
+                            SqlParameter[] sqlParameters = new SqlParameter[paramsObject.Count()];
+                            for (int i = 0; i < paramsObject.Count(); i++)
+                            {
+                                SqlParameter sqlParameter = new SqlParameter(paramsObject[i].Key, paramsObject[i].Value);
+                                sqlCmd.Parameters.Add(sqlParameter);
+                            }
+                        }
+                        SqlDataAdapter sda = new SqlDataAdapter(sqlCmd);
+                        sda.Fill(ResponseDs);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ResponseBool = false;
+                ResponseMsg = $"查询存储过程时出现异常，存储过程：【{storedProcedureName}】\n 异常原因：【{e.Message}】\n 异常详细信息：【{e.StackTrace}】！";
+            }
+            return ResponseDs;
+        }
+
+        //入参实体建类
+        /// <summary>
+        /// 输入参数实体   参数名称(Key)/参数值(Value)
+        /// </summary>
+        public class ParameterKeyValuesEntity
+        {
+            /// <summary>
+            /// 参数名称
+            /// </summary>
+            public string Key { get; set; }
+            /// <summary>
+            /// 参数值
+            /// </summary>
+            public string Value { get; set; }
+        }
         #region private utility methods & constructors
 
         // Since this class provides only static methods, make the default constructor private to prevent 

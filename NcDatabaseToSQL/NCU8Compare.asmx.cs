@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Services;
+using static NcDatabaseToSQL.SqlHelperForU8;
 
 namespace NcDatabaseToSQL
 {
@@ -52,6 +53,8 @@ namespace NcDatabaseToSQL
         string year = "";
         string month = "";
         string date = "";
+        bool ResponseBool = true;
+        string ResponseMsg = "获取成功";
         /// <summary>
         /// 公共调用方法
         /// 创建人：吕贺
@@ -101,6 +104,11 @@ namespace NcDatabaseToSQL
                 {
                     GetGlDetailVouchToSql();
                     msg = Ncu8CompareForPz();
+                }
+                if (dataType == "材料差异")
+                {
+                    DataSet dst = WarehousingCompareMaterialOut();
+                    msg = ResponseMsg;
                 }
             }
             return msg;
@@ -792,6 +800,23 @@ namespace NcDatabaseToSQL
                 msg = "科目余额数据对比失败：" + e.Message;
             }
             return msg;
+        }
+
+
+        /// <summary>
+        /// 比对同一月  生产入库所耗用的材料与实际材料出库差异
+        /// 创建人：lvhe
+        /// 创建时间：2020-4-16 23:43:10
+        /// </summary>
+        /// <returns></returns>
+        private DataSet WarehousingCompareMaterialOut()
+        {
+            //ParameterKeyValuesEntity[] paramsObject = new ParameterKeyValuesEntity[1];
+            ParameterKeyValuesEntity pk = new ParameterKeyValuesEntity();
+            pk.Key = "iperiod";
+            pk.Value = "2020-03";
+            DataSet ds = SqlHelperForU8.Sql_GetStoredProcedureFunction(conneU8ctionString, "EFCust_SP_GetIssueQty", 10, out ResponseBool, out ResponseMsg, pk);
+            return ds;
         }
     }
 }
