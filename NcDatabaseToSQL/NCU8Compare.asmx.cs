@@ -105,10 +105,9 @@ namespace NcDatabaseToSQL
                     GetGlDetailVouchToSql();
                     msg = Ncu8CompareForPz();
                 }
-                if (dataType == "材料差异")
+                if (dataType == "生产领料")
                 {
-                    DataSet dst = WarehousingCompareMaterialOut();
-                    msg = ResponseMsg;
+                    msg = WarehousingCompareMaterialOut();
                 }
             }
             return msg;
@@ -809,14 +808,25 @@ namespace NcDatabaseToSQL
         /// 创建时间：2020-4-16 23:43:10
         /// </summary>
         /// <returns></returns>
-        private DataSet WarehousingCompareMaterialOut()
+        private string WarehousingCompareMaterialOut()
         {
-            //ParameterKeyValuesEntity[] paramsObject = new ParameterKeyValuesEntity[1];
-            ParameterKeyValuesEntity pk = new ParameterKeyValuesEntity();
-            pk.Key = "iperiod";
-            pk.Value = "2020-03";
-            DataSet ds = SqlHelperForU8.Sql_GetStoredProcedureFunction(conneU8ctionString, "EFCust_SP_GetIssueQty", 10, out ResponseBool, out ResponseMsg, pk);
-            return ds;
+            string msg = "";
+            try
+            {
+                string delstrApps = "delete from  Spl_NCU8Compare where cbustype='生产领料'";
+                SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+                ParameterKeyValuesEntity pk = new ParameterKeyValuesEntity();
+                pk.Key = "iperiod";
+                pk.Value = queryDate;
+                DataSet ds = SqlHelperForU8.Sql_GetStoredProcedureFunction(conneU8ctionString, "EFCust_SP_GetIssueQty", 10, out ResponseBool, out ResponseMsg, pk);
+                StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ds, "Spl_NCU8Compare");
+                SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+            }
+            catch (Exception e)
+            {
+                msg = "生产领料：" + e.Message;
+            }
+            return msg;
         }
     }
 }
