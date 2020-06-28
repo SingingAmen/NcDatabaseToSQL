@@ -758,17 +758,17 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取材料出库行数据
-                    sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark from ic_material_h A left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                    sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,A2.Name cinvname,A3.code cinvclass,A2.materialspec cinvstd,A4.name cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark from ic_material_h A left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A2.pk_marbasclass=A3.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc=A2.pk_measdoc where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "'  and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
                 }
                 else
                 {
                     if (updateCount > 0)
                     {
-                        sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark from ic_material_h A left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
+                        sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,A2.Name cinvname,A3.code cinvclass,A2.materialspec cinvstd,A4.name cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark from ic_material_h A left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A2.pk_marbasclass=A3.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc=A2.pk_measdoc where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "'  and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
                     }
                     else
                     {
-                        sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark from ic_material_h A left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                        sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,A2.Name cinvname,A3.code cinvclass,A2.materialspec cinvstd,A4.name cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark from ic_material_h A left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A2.pk_marbasclass=A3.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc=A2.pk_measdoc where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "'  and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
                     }
                 }
                 DataSet MaterialLine = OracleHelper.ExecuteDataset(sql);
@@ -803,7 +803,7 @@ namespace NcDatabaseToSQL
 
                 if (existResult == 0)
                 {
-                    createSql = "create table RdRecords11(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),qty decimal(28, 8),remark nvarchar(100))";
+                    createSql = "create table RdRecords11(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),cinvname nvarchar(50),cinvclass nvarchar(50),cinvstd nvarchar(50),cinvUnit nvarchar(50),qty decimal(28, 8),remark nvarchar(100))";
                     SqlHelper.ExecuteNonQuery(createSql);
                     StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(MaterialLine, "RdRecords11");
                     SqlHelper.ExecuteNonQuery(strs.ToString());
