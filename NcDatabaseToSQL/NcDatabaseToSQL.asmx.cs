@@ -259,6 +259,7 @@ namespace NcDatabaseToSQL
                         msg = "采购发票表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("cgfpapi");
                 result = msg;
             }
             catch (Exception e)
@@ -401,6 +402,7 @@ namespace NcDatabaseToSQL
                         msg = "销售发票表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("xsfpapi");
                 result = msg;
             }
             catch (Exception e)
@@ -546,6 +548,7 @@ namespace NcDatabaseToSQL
                         msg = "采购入库表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("cgrkapi");
                 result = msg;
             }
             catch (Exception e)
@@ -684,6 +687,7 @@ namespace NcDatabaseToSQL
                         msg = "销售出库表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("fhdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -823,6 +827,7 @@ namespace NcDatabaseToSQL
                         msg = "材料出库表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("clckapi");
                 result = msg;
             }
             catch (Exception e)
@@ -963,6 +968,7 @@ namespace NcDatabaseToSQL
                         msg = "其他入库表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("qtrkdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1103,6 +1109,7 @@ namespace NcDatabaseToSQL
                         msg = "其他出库表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("qtckdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1243,6 +1250,7 @@ namespace NcDatabaseToSQL
                         msg = "产成品入库表暂无可更新数据";
                     }
                 }
+                GetU8SVApiUrlApi("ccprkapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1397,6 +1405,7 @@ namespace NcDatabaseToSQL
                     }
 
                 }
+                GetU8SVApiUrlApi("dbdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1572,6 +1581,7 @@ namespace NcDatabaseToSQL
                         msg = "形态转换表上月无数据";
                     }
                 }
+                GetU8SVApiUrlApi("xtzhdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1615,8 +1625,10 @@ namespace NcDatabaseToSQL
                 }
                 else
                 {
-                    string delstr = "delete from gl_voucher where id in(select ID from gl_voucher where zt != 1 )";
-                    string delstr2 = "delete from gl_vouchers where id in(select ID from gl_voucher where zt != 1 )";
+                    string delstr = "delete from gl_voucher";
+                    string delstr2 = "delete from gl_vouchers";
+                    //string delstr = "delete from gl_voucher where id in(select ID from gl_voucher where zt != 1 )";
+                    //string delstr2 = "delete from gl_vouchers where id in(select ID from gl_voucher where zt != 1 )";
                     SqlHelper.ExecuteNonQuerys(delstr2);
                     SqlHelper.ExecuteNonQuerys(delstr);
                     string str = "select id from gl_voucher";
