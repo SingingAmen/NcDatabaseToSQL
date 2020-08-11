@@ -71,6 +71,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="GetCheckU8Materiel.asmx" />
     <Content Include="NcDatabaseToSQL.asmx" />
     <Content Include="NCU8Compare.asmx" />
     <Content Include="Web.config">
@@ -79,6 +80,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataSetToArrayList.cs" />
+    <Compile Include="GetCheckU8Materiel.asmx.cs">
+      <DependentUpon>GetCheckU8Materiel.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="NcDatabaseToSQL.asmx.cs">
       <DependentUpon>NcDatabaseToSQL.asmx</DependentUpon>
       <SubType>Component</SubType>
