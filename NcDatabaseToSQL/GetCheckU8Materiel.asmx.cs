@@ -110,14 +110,14 @@ namespace NcDatabaseToSQL
             U8Dept = GetU8Depts(U8DeptList);
             sql = "select distinct docno,DocName,ItemCode,CreateTime from (";
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime" +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime " +
             "from ic_material_h A " +
-            "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid" +
-            "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid" +
-            "left join org_dept_v A3 on A3.pk_vid = A.cdptvid" +
-            "leftjoin bd_material A4 on A1.cmaterialvid = A4.pk_material" +
-            "where A2.billtypename = '行政部门领用（名鸿）'" +
-            "and A3.code not in (" + U8Dept + ")" +
+            "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
+            "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
+            "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
+            "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
+            "where A2.billtypename = '行政部门领用（名鸿）' " +
+            "and A3.code not in (" + U8Dept + ") " +
             "and substr(A4.code,1,2) not in('07', '08', '51', '52', '54') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
@@ -128,15 +128,62 @@ namespace NcDatabaseToSQL
             U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             U8Dept = GetU8Depts(U8DeptList);
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime" +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime " +
             "from ic_material_h A " +
-            "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid" +
-            "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid" +
-            "left join org_dept_v A3 on A3.pk_vid = A.cdptvid" +
-            "leftjoin bd_material A4 on A1.cmaterialvid = A4.pk_material" +
-            "where A2.billtypename = '行政部门领用（名鸿）'" +
-            "and A3.code not in (" + U8Dept + ")" +
-            "and substr(A4.code,1,2) not in('07', '08', '51', '52', '54') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
+            "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
+            "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
+            "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
+            "where A2.billtypename = '行政部门领用（名鸿）' " +
+            "and A3.code not in (" + U8Dept + ") " +
+            "and substr(A4.code,1,2) not in('01','03','10','11','12','13','14') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+
+
+            sql += " union all ";
+
+            u8depsql = " select cDepCode from Department where cDepProp = '塑件生产'";
+            //获取采购入库头数据
+            U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
+            U8Dept = GetU8Depts(U8DeptList);
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime " +
+            "from ic_material_h A " +
+            "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
+            "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
+            "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
+            "left join bd_material A4 on A1.cmaterialvid = A4.pk_material where A2.billtypename = '生产辅助领用（名鸿）' " +
+            "and A3.code not in (" + U8Dept + ") " +
+            "and substr(A4.code,1,2) not in('01', '07') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+
+            sql += " union all ";
+            u8depsql = " select cDepCode from Department where cDepProp = '塑磨件生产'";
+            //获取采购入库头数据
+            U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
+            U8Dept = GetU8Depts(U8DeptList);
+
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime " +
+            "from ic_material_h A " +
+            "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
+            "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
+            "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
+            "left join bd_material A4 on A1.cmaterialvid = A4.pk_material where A2.billtypename = '生产辅助领用（名鸿）' " +
+            "and A3.code not in (" + U8Dept + ") " +
+            "and substr(A4.code,1,2) not in('07', '10') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+
+            sql += " union all ";
+            u8depsql = " select cDepCode from Department where cDepProp = '喷涂生产'";
+            //获取采购入库头数据
+            U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
+            U8Dept = GetU8Depts(U8DeptList);
+
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode, to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss')  as CreateTime" +
+            " from ic_material_h A " +
+            " left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid" +
+            " left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid" +
+            " left join org_dept_v A3 on A3.pk_vid = A.cdptvid" +
+            " left join bd_material A4 on A1.cmaterialvid = A4.pk_material where A2.billtypename = '生产辅助领用（名鸿）'" +
+            " and A3.code not in (" + U8Dept + ")" +
+            " and substr(A4.code,1,2) not in('03', '07', '10', '11') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+
 
             sql += ")";
 
