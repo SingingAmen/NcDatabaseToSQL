@@ -101,6 +101,9 @@ namespace NcDatabaseToSQL
                 case "kehu":
                     msg = GetCustomerToSql();
                     break;
+                case "djsh":
+                    msg = DoApprove();
+                    break;
                 default:
                     msg = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
                     break;
@@ -1939,6 +1942,28 @@ namespace NcDatabaseToSQL
             return result;
         }
 
+        /// <summary>
+        /// 单据审核接口
+        /// 创建人：lvhe
+        /// 创建时间：2020-8-21 16:40:37
+        /// </summary>
+        /// <returns></returns>
+        [WebMethod]
+        private string DoApprove()
+        {
+            string result = "";
+            try
+            {
+                GetU8SVApiUrlApi("djshapi");
+                result = "审核成功";
+            }
+            catch (Exception e)
+            {
+                result = "单据审核：" + e.Message;
+            }
+            return result;
+        }
+
 
         /// <summary>
         /// 处理 Oracle SQL in 超过1000 的解决方案
@@ -2106,6 +2131,11 @@ namespace NcDatabaseToSQL
                     webApiType = "Post";
                     webApiParam = "plgxccprkapi";
                     break;
+                case "djshapi":
+                    webApiUrl = U8SVApiUrl + "ERPU8/DoApprove";
+                    webApiType = "Post";
+                    webApiParam = "djshapi";
+                    break;
                 default:
                     webApiUrl = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
                     break;
@@ -2214,6 +2244,9 @@ namespace NcDatabaseToSQL
                 case "plgxccprkapi":
                     msg = "批量更新产成品项目号接口";
                     break;
+                case "djshapi":
+                    msg = "单据审核接口";
+                    break;
                 default:
                     msg = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
                     break;
@@ -2306,6 +2339,9 @@ namespace NcDatabaseToSQL
                     break;
                 case "plgxccprkapi":
                     msg = "批量更新产成品项目号接口";
+                    break;
+                case "djshapi":
+                    msg = "单据审核接口";
                     break;
                 default:
                     msg = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
