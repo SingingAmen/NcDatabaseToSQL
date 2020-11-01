@@ -109,7 +109,7 @@ namespace NcDatabaseToSQL
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
             sql = "select distinct docno,DocName,ItemCode,CreateTime,def1 from (";
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=行政部门领用（名鸿）物料编码开头不为07/08/51/52/54 部门属性=行政' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=行政部门领用（名鸿）物料编码开头07/08/51/52/54 部门属性=行政' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -117,7 +117,7 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '行政部门领用（名鸿）'and A5.name = '行政' " +
-            "and substr(A4.code,1,2) not in('07', '08', '51', '52', '54') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) in ('07', '08', '51', '52', '54') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
 
@@ -127,7 +127,7 @@ namespace NcDatabaseToSQL
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产辅助领用（名鸿）物料编码开头为01/03/10/11/12/13/14 部门属性=非行政' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产辅助领用（名鸿）物料编码开头不为01/03/10/11/12/13/14 部门属性=非行政' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -135,7 +135,7 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产辅助领用（名鸿）' and A5.name != '行政' " +
-            "and substr(A4.code,1,2) in('01', '03', '10', '11', '12', '13', '14') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) not in ('01', '03', '10', '11', '12', '13', '14') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
 
             sql += " union all ";
@@ -144,15 +144,15 @@ namespace NcDatabaseToSQL
             ////获取采购入库头数据
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头不为01/07 部门属性=塑件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头为01/07 部门属性=塑件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
             "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
-            "where A2.billtypename = 生产直接领用（名鸿）' and A5.name = '塑件生产' " +
-            "and substr(A4.code,1,2) not in('01', '07') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "where A2.billtypename = '生产直接领用（名鸿）' and A5.name = '塑件生产' " +
+            "and substr(A4.code,1,2) in ('01', '07') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
             //u8depsql = " select cDepCode from Department where cDepProp = '塑磨件生产'";
@@ -160,7 +160,7 @@ namespace NcDatabaseToSQL
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头不为07/10 部门属性=塑磨件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头为07/10 部门属性=塑磨件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -168,7 +168,7 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产直接领用（名鸿）' and A5.name = '塑磨件生产' " +
-            "and substr(A4.code,1,2) not in('07', '10') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) in ('07', '10') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
             //u8depsql = " select cDepCode from Department where cDepProp = '喷涂生产'";
@@ -176,7 +176,7 @@ namespace NcDatabaseToSQL
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头不为03/07/10/11 部门属性=喷涂生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头为03/07/10/11 部门属性=喷涂生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -184,11 +184,11 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产直接领用（名鸿）' and A5.name = '喷涂生产' " +
-            "and substr(A4.code,1,2) not in('03', '07', '10', '11') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) in ('03', '07', '10', '11') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头不为07/10/11/12/13 部门属性=装配生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）物料编码开头为07/10/11/12/13 部门属性=装配生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -197,22 +197,23 @@ namespace NcDatabaseToSQL
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产直接领用（名鸿）' " +
             "and A5.name = '装配生产' " +
-            "and substr(A4.code,1,2) not in('07', '10', '11', '12', '13') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) in ('07', '10', '11', '12', '13') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头不为10 部门属性=塑件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+
+            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头为10 部门属性=塑件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_finprodin_h A " +
             "left join ic_finprodin_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
             "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
-            "where A2.billtypename = '生产直接领用（名鸿）' and A5.name = '塑件生产' " +
-            "and substr(A4.code,1,2) not in('10') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "where A2.billtypename = '生产产成品入库（名鸿）' and A5.name = '塑件生产' " +
+            "and substr(A4.code,1,2) in ('10') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头不为11 部门属性=塑磨件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头为11 部门属性=塑磨件生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_finprodin_h A " +
             "left join ic_finprodin_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -220,10 +221,10 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产产成品入库（名鸿）' and A5.name = '塑磨件生产' " +
-            "and substr(A4.code,1,2) not in('11') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) in ('11') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头不为13 部门属性=喷涂生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头为13 部门属性=喷涂生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_finprodin_h A " +
             "left join ic_finprodin_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -231,10 +232,10 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产产成品入库（名鸿）'and A5.name = '喷涂生产' " +
-            "and substr(A4.code,1,2) not in('0915') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2)  in ('13') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头不为14 部门属性=装配生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'产成品入库' DocName,A4.code ItemCode,'出入库类型=生产产成品入库（名鸿）物料编码开头为14 部门属性=装配生产' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_finprodin_h A " +
             "left join ic_finprodin_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -242,7 +243,8 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_defdoc A5 on A5.pk_defdoc = A3.deptlevel " +
             "where A2.billtypename = '生产产成品入库（名鸿）' and A5.name = '装配生产' " +
-            "and substr(A4.code,1,2) not in('14') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,2) in ('14') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+
 
             sql += " union all ";
             sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'出入库类型=生产直接领用（名鸿）部门属性条件:委外成本中心(部门档案备注为委外）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
@@ -265,7 +267,7 @@ namespace NcDatabaseToSQL
             "and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'其它入库' DocName,A4.code ItemCode,'出入库类型=包装材料入库 物料编码开头不为0915开头的编码 检查规则：物料编码与出入库类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'其它入库' DocName,A4.code ItemCode,'出入库类型=包装材料入库 物料编码开头为0915开头的编码 检查规则：物料编码与出入库类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_generalin_h A " +
             "left join ic_generalin_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -273,10 +275,10 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_billtype A5 ON A5.pk_billtypecode = A.vtrantypecode " +
             "where A2.billtypename = '包装材料入库' " +
-            "and substr(A4.code,1,4) not in('0915') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,4) in ('0915') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'其它出库' DocName,A4.code ItemCode,'出入库类型=包装材料出库 物料编码开头不为0915开头的编码 检查规则：物料编码与出入库类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'其它出库' DocName,A4.code ItemCode,'出入库类型=包装材料出库 物料编码开头为0915开头的编码 检查规则：物料编码与出入库类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_generalout_h A " +
             "left join ic_generalout_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -284,7 +286,7 @@ namespace NcDatabaseToSQL
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_billtype A5 ON A5.pk_billtypecode = A.vtrantypecode " +
             "where A2.billtypename = '包装材料出库' " +
-            "and substr(A4.code,1,4) not in('0915') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "and substr(A4.code,1,4) in ('0915') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
 
             sql += " union all ";
@@ -323,24 +325,24 @@ namespace NcDatabaseToSQL
              "and A6.name = '研发部-质量部' and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'其它入库' DocName,A4.code ItemCode,'仓库不为PPG仓库、受托加工仓 检查规则：仓库与单据类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime "+
+            sql += "select distinct A.vbillcode DocNO,'其它入库' DocName,A4.code ItemCode,'仓库为PPG仓库、受托加工仓 检查规则：仓库与单据类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime "+
             "from ic_generalin_h A " +
             "left join ic_generalin_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
             "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_stordoc A5 on A5.pk_stordoc = A.cwarehouseid " +
-            "where A.cwarehouseid = A.ctrantypeid and A5.name not in('PPG仓库', '受托加工仓') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "where A.cwarehouseid = A.ctrantypeid and A5.name in('PPG仓库', '受托加工仓') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'其它出库' DocName,A4.code ItemCode,'仓库不为PPG仓库、受托加工仓 检查规则：仓库与单据类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'其它出库' DocName,A4.code ItemCode,'仓库为PPG仓库、受托加工仓 检查规则：仓库与单据类型匹配' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_generalin_h A " +
             "left join ic_generalout_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
             "left join org_dept_v A3 on A3.pk_vid = A.cdptvid " +
             "left join bd_material A4 on A1.cmaterialvid = A4.pk_material " +
             "left join bd_stordoc A5 on A5.pk_stordoc = A.cwarehouseid " +
-            "where A.cwarehouseid = A.ctrantypeid and A5.name not in('PPG仓库', '受托加工仓') and substr(A.dbilldate,0,7) = '" + datetime + "'";
+            "where A.cwarehouseid = A.ctrantypeid and A5.name in('PPG仓库', '受托加工仓') and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += ")";
 
