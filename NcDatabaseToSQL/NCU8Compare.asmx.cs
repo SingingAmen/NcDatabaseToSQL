@@ -457,7 +457,7 @@ namespace NcDatabaseToSQL
             try
             {
                 //获取采购发票数据
-                sql = "select  '科目余额' as cbustype, A.ccode as cInvCode,A1.ccode_name as publicsec3,sum(a.md) as iQuantity,sum(a.mc) as publicsec1,GETDATE() as CreateTime from GL_accvouch a left join code A1 on A.ccode=A1.ccode and A1.iyear='" + year + "' where a.iYPeriod='" + date + "' and A.ccode in (" + connU8KmdzCode + ") group by A.ccode,A1.ccode_name order by a.ccode desc";
+                sql = "select  '科目余额' as cbustype, A.ccode as cInvCode,A1.ccode_name as publicsec3,sum(a.md) as iQuantity,sum(a.mc) as publicsec1,GETDATE() as CreateTime from GL_accvouch a left join code A1 on A.ccode=A1.ccode and A1.iyear='" + year + "' where a.iYPeriod='" + date + "' and A.ccode in (" + connU8KmdzCode + ") and isnull(a.iFlag,0)<>1 group by A.ccode,A1.ccode_name order by a.ccode desc";
 
                 //获取采购发票数据
                 DataSet GlDetail = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
