@@ -160,7 +160,7 @@ namespace NcDatabaseToSQL
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'不满足（出入库类型=生产直接领用（名鸿）物料编码开头为07 部门属性=（'塑件生产','塑磨件生产','喷涂生产','装配生产'））' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'不满足（出入库类型=生产直接领用（名鸿）物料编码开头为07 部门属性=塑件生产/塑磨件生产/喷涂生产/装配生产）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -176,7 +176,7 @@ namespace NcDatabaseToSQL
             //U8DeptList = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, u8depsql);
             //U8Dept = GetU8Depts(U8DeptList);
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'不满足（出入库类型=生产直接领用（名鸿）物料编码开头为10 部门属性=('塑磨件生产','喷涂生产','装配生产')）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'不满足（出入库类型=生产直接领用（名鸿）物料编码开头为10 部门属性=/塑磨件生产/喷涂生产/装配生产）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -188,7 +188,7 @@ namespace NcDatabaseToSQL
 
             sql += " union all ";
 
-            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'不满足（出入库类型=生产直接领用（名鸿）物料编码开头为11 部门属性=('喷涂生产','装配生产') ）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'材料出库' DocName,A4.code ItemCode,'不满足（出入库类型=生产直接领用（名鸿）物料编码开头为11 部门属性=喷涂生产/装配生产）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_material_h A " +
             "left join ic_material_b A1 on A.cgeneralhid = A1.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -327,7 +327,7 @@ namespace NcDatabaseToSQL
             "and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
-            sql += "select distinct A.vbillcode DocNO,'其它出库' DocName,A4.code ItemCode,'不满足（出入库类型=项目领用 物料编码开头不为0207开头的编码 检查规则：物料编码与出入库类型不匹配）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
+            sql += "select distinct A.vbillcode DocNO,'其它出库' DocName,A4.code ItemCode,'不满足（出入库类型=项目领用 部门编码为0207 检查规则：物料编码与出入库类型不匹配）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +
             "from ic_generalout_h A " +
             "left join ic_generalout_b A1 on A1.cgeneralhid = A.cgeneralhid " +
             "left join bd_billtype A2 on A2.pk_billtypeid = A.ctrantypeid " +
@@ -348,7 +348,7 @@ namespace NcDatabaseToSQL
              "left join bd_billtype A5 ON A5.pk_billtypecode = A.vtrantypecode " +
              "left join bd_defdoc A6 on A6.pk_defdoc = A3.deptlevel " +
              "where A2.billtypename = '研发领用'  and A3.Code != '0204' AND A.vnote != A5.pk_billtypecode " +
-             "and A6.name = '研发部-质量部' and substr(A.dbilldate,0,7) = '" + datetime + "'";
+             "and A6.name != '研发部-质量部' and substr(A.dbilldate,0,7) = '" + datetime + "'";
 
             sql += " union all ";
             sql += "select distinct A.vbillcode DocNO,'其它入库' DocName,A4.code ItemCode,'不满足（仓库为PPG仓库、受托加工仓 检查规则：仓库与单据类型匹配）' def1,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime " +

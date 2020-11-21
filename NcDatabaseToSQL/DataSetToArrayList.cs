@@ -67,7 +67,8 @@ namespace NcDatabaseToSQL
                     //        ValueAll += ",";
                     //        break;
                     //}
-                    ValueAll += "'" + dv[n][m].ToString() + "'";
+                    //ValueAll += "''" + dv[n][m].ToString() + "''";
+                    ValueAll += "'" + dv[n][m].ToString().Replace("'", "''") + "'";
                     ValueAll += ",";
                 }
                 ValueAll = ValueAll.Substring(0, ValueAll.Length - 1); //去掉最后一个“，”
