@@ -60,6 +60,9 @@ namespace NcDatabaseToSQL
                 case "cgfp":
                     msg = GetPurchaseInvoicesToSql();
                     break;
+                case "wlqd":
+                    msg = GetBomToSql();
+                    break;
                 case "xsfp":
                     msg = GetSoSaleinvoiceToSql();
                     break;
@@ -274,6 +277,148 @@ namespace NcDatabaseToSQL
 
         }
 
+
+        /// <summary>
+        /// 从nc获取bom数据插入到sql
+        /// 创建人：lvhe
+        /// 创建时间：2019年10月13日 22:59:30
+        /// </summary>
+        /// <returns></returns>
+        [WebMethod]
+        private string GetBomToSql()
+        {
+            string result = "";
+            string createSql = "";
+            string tableExist = "";
+            int existResult = 0;
+            string msg = "";
+            string sql = "";
+            StringBuilder strbu = new StringBuilder();
+            string strGetOracleSQLIn = "";
+            DataSet sqlServerInvoices = new DataSet();
+            int updateCount = 0;
+            try
+            {
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'Bom') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    //获取采购发票头数据
+                    sql = "select distinct A.cbomid ID,A2.code itemcode,A.creationtime ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid where A.PK_ORG='0001A110000000001V70' and A.DR!=1 AND substr(A.creationtime,0,10) between '" + startTime + "' and '" + endTime + "'";
+                }
+                else
+                {
+                    string delstr = "delete from Bom where id in(select ID from Bom where zt != 1 )";
+                    string delstr2 = "delete from Boms where id in(select ID from Bom where zt != 1 )";
+                    SqlHelper.ExecuteNonQuerys(delstr2);
+                    SqlHelper.ExecuteNonQuerys(delstr);
+                    string str = "select id from Bom";
+                    DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, str);
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        updateCount = ds.Tables[0].Rows.Count;
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            strbu.Append(dr["id"].ToString() + ",");
+                        }
+                        strbu = strbu.Remove(strbu.Length - 1, 1);
+                        String[] ids = strbu.ToString().Split(',');
+                        strGetOracleSQLIn = getOracleSQLIn(ids, "A.cbomid");
+                        //获取采购发票头数据
+                        sql = "select distinct A.cbomid ID,A2.code itemcode,A.creationtime ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid where A.PK_ORG='0001A110000000001V70' and A.DR!=1 AND substr(A.creationtime,0,10) between '" + startTime + "' and '" + endTime + "' and " + strGetOracleSQLIn + "";
+                    }
+                    else
+                    {
+                        updateCount = 0;
+                        sql = "select distinct A.cbomid ID,A2.code itemcode,A.creationtime ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid where A.PK_ORG='0001A110000000001V70' and A.DR!=1 AND substr(A.creationtime,0,10) between '" + startTime + "' and '" + endTime + "'";
+                    }
+                }
+                DataSet Bom = OracleHelper.ExecuteDataset(sql);
+
+                //获取采购发票行数据
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'Boms') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code citemcode,A2.NAME citemname,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef4 ideptcode from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  where A.PK_ORG='0001A110000000001V70' and A.DR!=1 AND substr(A.creationtime,0,10) between '" + startTime + "' and '" + endTime + "'";
+                }
+                else
+                {
+                    if (updateCount > 0)
+                    {
+                        sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code citemcode,A2.NAME citemname,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef4 ideptcode from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  where A.PK_ORG='0001A110000000001V70' and A.DR!=1 AND substr(A.creationtime,0,10) between '" + startTime + "' and '" + endTime + "' and " + strGetOracleSQLIn + "";
+                    }
+                    else
+                    {
+                        sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code citemcode,A2.NAME citemname,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef4 ideptcode from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  where A.PK_ORG='0001A110000000001V70' and A.DR!=1 AND substr(A.creationtime,0,10) between '" + startTime + "' and '" + endTime + "'";
+                    }
+                }
+                DataSet Boms = OracleHelper.ExecuteDataset(sql);
+
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'Bom') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table Bom(ID nvarchar(30) primary key not null,itemcode nvarchar(50),ddate nvarchar(20),bomversion nvarchar(50),bomversionexplain nvarchar(50),remark nvarchar(100),ts nvarchar(50),zt bit default 0,memo text)";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Bom, "Bom");
+                    SqlHelper.ExecuteNonQuery(str.ToString());
+                    msg = "物料清单表插入成功";
+                }
+                else
+                {
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Bom, "Bom");
+                    if (!string.IsNullOrEmpty(str.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(str.ToString());
+                        msg = "物料清单表更新成功";
+                    }
+                    else
+                    {
+                        msg = "物料清单表暂无无可更新数据";
+                    }
+                }
+                tableExist = "if object_id( 'Boms') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table Boms(ID nvarchar(30),autoid nvarchar(30) primary key not null,doclineno nvarchar(30),citemcode nvarchar(50),citemname nvarchar(50),inassitemnum decimal(28, 8),ibasenum decimal(28, 8),ibdeliver nvarchar(50),ifsupplymode nvarchar(50),ifbackflushtype nvarchar(50),ifbackflushtime nvarchar(50),ibbchkitemforwr nvarchar(50),icbeginperiod nvarchar(50),icendperiod nvarchar(50),ideptcode nvarchar(50))";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(Boms, "Boms");
+                    SqlHelper.ExecuteNonQuery(strs.ToString());
+                    msg = "物料清单表行插入成功";
+                }
+                else
+                {
+                    StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(Boms, "Boms");
+                    if (!string.IsNullOrEmpty(strs.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(strs.ToString());
+                        msg = "物料清单表行更新成功";
+                    }
+                    else
+                    {
+                        msg = "物料清单表暂无可更新数据";
+                    }
+                }
+                //GetU8SVApiUrlApi("cgfpapi");
+                result = msg;
+            }
+            catch (Exception e)
+            {
+
+                result = "物料清单表行错误：" + e.Message;
+            }
+            return result;
+
+        }
 
         /// <summary>
         /// 从nc获取销售发票数据插入到sql
