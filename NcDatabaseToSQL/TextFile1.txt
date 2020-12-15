@@ -1,0 +1,54 @@
+﻿ywdjdr  业务单据导入
+
+采购入库
+GetPurchaseinToSql();   GetU8SVApiUrlApi("cgrkapi");
+
+材料出库
+case "clck":
+msg = GetMaterialToSql();  GetU8SVApiUrlApi("clckapi");
+break;
+
+产成品入库
+case "ccprk":
+msg = GetFinprodInToSql();  GetU8SVApiUrlApi("ccprkapi");
+break;
+
+其他入库
+case "qtrk":
+msg = GetIAi4billToSql();   GetU8SVApiUrlApi("qtrkdapi");
+break;
+            
+其他出库
+case "qtck":
+msg = GetIAi7billToSql();   GetU8SVApiUrlApi("qtckdapi");
+break;
+
+形态转换
+case "xtzh":
+msg = GetIcTransformHToSql();   GetU8SVApiUrlApi("xtzhdapi");
+break;
+
+调拨单
+case "dbd":
+msg = GetIcWhstransHToSql();  GetU8SVApiUrlApi("dbdapi");
+break;
+
+销售出库
+case "xsck":
+msg = GetSaleOutToSql();    GetU8SVApiUrlApi("fhdapi");
+break;
+
+采购发票
+case "cgfp":
+msg = GetPurchaseInvoicesToSql();       GetU8SVApiUrlApi("cgfpapi");
+break;
+
+销售发票
+case "xsfp":
+msg = GetSoSaleinvoiceToSql();    GetU8SVApiUrlApi("xsfpapi");
+break;
+
+业务单据导入
+
+
+

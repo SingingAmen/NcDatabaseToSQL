@@ -51,68 +51,168 @@ namespace NcDatabaseToSQL
         /// 创建时间：2019年10月23日 13:55:45
         /// </summary>
         /// <returns></returns>
+        #region 《老方法单个调用方式---弃用》
+        //[WebMethod]
+        //public string NcInsertToSql(string interfaceParameters)
+        //{
+        //    string msg = "";
+        //    switch (interfaceParameters)
+        //    {
+        //        case "cgfp":
+        //            msg = GetPurchaseInvoicesToSql();
+        //            break;
+        //        case "wlqd":
+        //            msg = GetBomToSql();
+        //            break;
+        //        case "xsfp":
+        //            msg = GetSoSaleinvoiceToSql();
+        //            break;
+        //        //采购入库
+        //        case "cgrkandclckandccprk":
+        //            //材料出库
+        //            //case "clck":
+        //            //产成品入库  
+        //            //case "ccprk":
+        //            msg = GetPurchaseinToSql();
+        //            msg = msg + "-" + GetMaterialToSql();
+        //            msg = msg + "-" + GetFinprodInToSql();
+        //            break;
+        //        case "xsck":
+        //            msg = GetSaleOutToSql();
+        //            break;
+        //        //材料出库
+        //        //case "clck":
+        //        //    msg = GetMaterialToSql();
+        //        //    break;
+        //        case "qtrk":
+        //            msg = GetIAi4billToSql();
+        //            break;
+        //        case "qtck":
+        //            msg = GetIAi7billToSql();
+        //            break;
+        //        //产成品入库    
+        //        //case "ccprk":
+        //        //    msg = GetFinprodInToSql();
+        //        //    break;
+        //        case "dbd":
+        //            msg = GetIcWhstransHToSql();
+        //            break;
+        //        case "xtzh":
+        //            msg = GetIcTransformHToSql();
+        //            break;
+        //        case "pzb":
+        //            msg = GetGlVoucherToSql();
+        //            break;
+        //        case "wuliao":
+        //            msg = GetInventoryToSql();
+        //            break;
+        //        case "gys":
+        //            msg = GetSupplierToSql();
+        //            break;
+        //        case "kehu":
+        //            msg = GetCustomerToSql();
+        //            break;
+        //        case "djsh":
+        //            msg = DoApprove();
+        //            break;
+        //        default:
+        //            msg = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
+        //            break;
+        //    }
+
+        //    //switch (interfaceParameters)
+        //    //{
+        //    //    case "cgfp":
+        //    //        msg = "cgfp";
+        //    //        break;
+        //    //    case "xsfp":
+        //    //        msg = "xsfp";
+        //    //        break;
+        //    //    case "cgrk":
+        //    //        msg = "cgrk";
+        //    //        break;
+        //    //    case "xsck":
+        //    //        msg = "xsck";
+        //    //        break;
+        //    //    default:
+        //    //        msg = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
+        //    //        break;
+        //    //}
+
+        //    return msg;
+        //}
+        #endregion
+
+        /// <summary>
+        /// 一键调用
+        ///采购入库/材料出库/产成品入库/其他入库/其他出库/形态转换/调拨单/销售出库/采购发票/销售发票
+        ///创建人：lvhe
+        ///创建时间：2020-12-15 18:44:45
+        /// </summary>
+        /// <param name="interfaceParameters"></param>
+        /// <returns></returns>
         [WebMethod]
         public string NcInsertToSql(string interfaceParameters)
         {
             string msg = "";
             switch (interfaceParameters)
             {
-                case "cgfp":
-                    msg = GetPurchaseInvoicesToSql();
-                    break;
+                //物料清单
                 case "wlqd":
                     msg = GetBomToSql();
                     break;
-                case "xsfp":
-                    msg = GetSoSaleinvoiceToSql();
-                    break;
-                //采购入库
-                case "cgrkandclckandccprk":
-                    //材料出库
-                    //case "clck":
-                    //产成品入库  
-                    //case "ccprk":
-                    msg = GetPurchaseinToSql();
-                    msg = msg + "-" + GetMaterialToSql();
-                    msg = msg + "-" + GetFinprodInToSql();
-                    break;
-                case "xsck":
-                    msg = GetSaleOutToSql();
-                    break;
-                //材料出库
-                //case "clck":
-                //    msg = GetMaterialToSql();
-                //    break;
-                case "qtrk":
-                    msg = GetIAi4billToSql();
-                    break;
-                case "qtck":
-                    msg = GetIAi7billToSql();
-                    break;
-                //产成品入库    
-                //case "ccprk":
-                //    msg = GetFinprodInToSql();
-                //    break;
-                case "dbd":
-                    msg = GetIcWhstransHToSql();
-                    break;
-                case "xtzh":
-                    msg = GetIcTransformHToSql();
-                    break;
+                //凭证
                 case "pzb":
                     msg = GetGlVoucherToSql();
                     break;
+                //物料
                 case "wuliao":
                     msg = GetInventoryToSql();
                     break;
+                //供应商档案
                 case "gys":
                     msg = GetSupplierToSql();
                     break;
+                //客户
                 case "kehu":
                     msg = GetCustomerToSql();
                     break;
+                //单据审核接口
                 case "djsh":
                     msg = DoApprove();
+                    break;
+                case "ywdjdr":
+                    //采购入库
+                    msg = GetPurchaseinToSql() + "/";
+                    //材料出库
+                    msg = msg + GetMaterialToSql() + "/";
+                    //产成品入库
+                    msg = msg + GetFinprodInToSql() + "/";
+                    //其他入库
+                    msg = msg + GetIAi4billToSql() + "/";
+                    //其他出库
+                    msg = msg + GetIAi7billToSql() + "/";
+                    //形态转换
+                    msg = msg + GetIcTransformHToSql() + "/";
+                    //调拨单
+                    msg = msg + GetIcWhstransHToSql() + "/";
+                    //销售出库
+                    msg = msg + GetSaleOutToSql() + "/";
+                    //采购发票
+                    msg = msg + GetPurchaseInvoicesToSql() + "/";
+                    //销售发票
+                    msg = msg + GetSoSaleinvoiceToSql() + "/";
+
+                    GetU8SVApiUrlApi("cgrkapi");
+                    GetU8SVApiUrlApi("clckapi");
+                    GetU8SVApiUrlApi("ccprkapi");
+                    GetU8SVApiUrlApi("qtrkdapi");
+                    GetU8SVApiUrlApi("qtckdapi");
+                    GetU8SVApiUrlApi("xtzhdapi");
+                    GetU8SVApiUrlApi("dbdapi");
+                    GetU8SVApiUrlApi("fhdapi");
+                    GetU8SVApiUrlApi("cgfpapi");
+                    GetU8SVApiUrlApi("xsfpapi");
                     break;
                 default:
                     msg = "请检查参数是否正确,没有找到输入参数对应的接口信息！";
@@ -140,7 +240,6 @@ namespace NcDatabaseToSQL
 
             return msg;
         }
-
 
         /// <summary>
         /// 从nc获取采购发票数据插入到sql
@@ -272,7 +371,7 @@ namespace NcDatabaseToSQL
                         msg = "采购发票表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("cgfpapi");
+                //GetU8SVApiUrlApi("cgfpapi");
                 result = msg;
             }
             catch (Exception e)
@@ -557,7 +656,7 @@ namespace NcDatabaseToSQL
                         msg = "销售发票表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("xsfpapi");
+                //GetU8SVApiUrlApi("xsfpapi");
                 result = msg;
             }
             catch (Exception e)
@@ -703,7 +802,7 @@ namespace NcDatabaseToSQL
                         msg = "采购入库表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("cgrkapi");
+                //GetU8SVApiUrlApi("cgrkapi");
                 result = msg;
             }
             catch (Exception e)
@@ -842,7 +941,7 @@ namespace NcDatabaseToSQL
                         msg = "销售出库表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("fhdapi");
+                //GetU8SVApiUrlApi("fhdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -982,7 +1081,7 @@ namespace NcDatabaseToSQL
                         msg = "材料出库表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("clckapi");
+                //GetU8SVApiUrlApi("clckapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1123,7 +1222,7 @@ namespace NcDatabaseToSQL
                         msg = "其他入库表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("qtrkdapi");
+                //GetU8SVApiUrlApi("qtrkdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1264,7 +1363,7 @@ namespace NcDatabaseToSQL
                         msg = "其他出库表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("qtckdapi");
+                //GetU8SVApiUrlApi("qtckdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1405,7 +1504,7 @@ namespace NcDatabaseToSQL
                         msg = "产成品入库表暂无可更新数据";
                     }
                 }
-                GetU8SVApiUrlApi("ccprkapi");
+                //GetU8SVApiUrlApi("ccprkapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1560,7 +1659,7 @@ namespace NcDatabaseToSQL
                     }
 
                 }
-                GetU8SVApiUrlApi("dbdapi");
+                //GetU8SVApiUrlApi("dbdapi");
                 result = msg;
             }
             catch (Exception e)
@@ -1736,7 +1835,7 @@ namespace NcDatabaseToSQL
                         msg = "形态转换表上月无数据";
                     }
                 }
-                GetU8SVApiUrlApi("xtzhdapi");
+                //GetU8SVApiUrlApi("xtzhdapi");
                 result = msg;
             }
             catch (Exception e)

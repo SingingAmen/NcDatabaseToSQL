@@ -75,6 +75,7 @@
     <Content Include="GetDocBackInfo.asmx" />
     <Content Include="NcDatabaseToSQL.asmx" />
     <Content Include="NCU8Compare.asmx" />
+    <Content Include="TextFile1.txt" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
