@@ -67,15 +67,22 @@ namespace NcDatabaseToSQL
                     msg = GetSoSaleinvoiceToSql();
                     break;
                 //采购入库
-                case "cgrk":
+                case "cgrkandclckandccprk":
+                    //材料出库
+                    //case "clck":
+                    //产成品入库  
+                    //case "ccprk":
                     msg = GetPurchaseinToSql();
+                    msg = msg + "-" + GetMaterialToSql();
+                    msg = msg + "-" + GetFinprodInToSql();
                     break;
                 case "xsck":
                     msg = GetSaleOutToSql();
                     break;
-                case "clck":
-                    msg = GetMaterialToSql();
-                    break;
+                //材料出库
+                //case "clck":
+                //    msg = GetMaterialToSql();
+                //    break;
                 case "qtrk":
                     msg = GetIAi4billToSql();
                     break;
@@ -83,9 +90,9 @@ namespace NcDatabaseToSQL
                     msg = GetIAi7billToSql();
                     break;
                 //产成品入库    
-                case "ccprk":
-                    msg = GetFinprodInToSql();
-                    break;
+                //case "ccprk":
+                //    msg = GetFinprodInToSql();
+                //    break;
                 case "dbd":
                     msg = GetIcWhstransHToSql();
                     break;
