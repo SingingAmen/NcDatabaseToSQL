@@ -425,7 +425,8 @@ namespace NcDatabaseToSQL
 
                     string sqlnew = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11' ";
                     DataSet BomNew = OracleHelper.ExecuteDataset(sqlnew);
-                    DataSetToArrayList.DataSetToArrayLists(BomNew, "BomNew");
+                    StringBuilder instetsql = DataSetToArrayList.DataSetToArrayLists(BomNew, "BomNew");
+                    SqlHelper.ExecuteNonQuery(instetsql.ToString());
                     string delids = "select A.id from bom as A left join BomNew A1 on A.ID = A1.ID and A.cinvcode = A1.cinvcode and A.cinvstd = A1.cinvstd and a.bomversion = a1.bomversion where A.ts != A1.ts";
                     DataSet dsnew = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, delids);
                     StringBuilder strbunew = new StringBuilder();
