@@ -412,14 +412,36 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取采购发票头数据
-                    sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.creationtime ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11' ";
+                    sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11' ";
                 }
                 else
                 {
                     string delstr = "delete from Bom where id in(select ID from Bom where zt != 1 )";
                     string delstr2 = "delete from Boms where id in(select ID from Bom where zt != 1 )";
+                    string delstr3 = "delete from BomNew";//更新表
                     SqlHelper.ExecuteNonQuerys(delstr2);
                     SqlHelper.ExecuteNonQuerys(delstr);
+                    SqlHelper.ExecuteNonQuerys(delstr3);
+
+                    string sqlnew = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11' ";
+                    DataSet BomNew = OracleHelper.ExecuteDataset(sqlnew);
+                    DataSetToArrayList.DataSetToArrayLists(BomNew, "BomNew");
+                    string delids = "select A.id from bom as A left join BomNew A1 on A.ID = A1.ID and A.cinvcode = A1.cinvcode and A.cinvstd = A1.cinvstd and a.bomversion = a1.bomversion where A.ts != A1.ts";
+                    DataSet dsnew = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, delids);
+                    StringBuilder strbunew = new StringBuilder();
+                    if (dsnew.Tables[0].Rows.Count > 0)
+                    {
+                        foreach (DataRow dr in dsnew.Tables[0].Rows)
+                        {
+                            strbunew.Append("'" + dr["id"].ToString() + "'" + ",");
+                        }
+                        strbunew = strbunew.Remove(strbunew.Length - 1, 1);
+                        string delstrnew = "delete from Bom where id in(" + strbunew + ")";
+                        string delstr2new = "delete from Boms where id in(" + strbunew + ")";
+                        SqlHelper.ExecuteNonQuerys(delstr2new);
+                        SqlHelper.ExecuteNonQuerys(delstrnew);
+                    }
+
                     string str = "select id from Bom";
                     DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, str);
                     if (ds.Tables[0].Rows.Count > 0)
@@ -433,12 +455,12 @@ namespace NcDatabaseToSQL
                         String[] ids = strbu.ToString().Split(',');
                         strGetOracleSQLIn = getOracleSQLIn(ids, "A.cbomid");
                         //获取采购发票头数据
-                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.creationtime ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11' and " + strGetOracleSQLIn + "";
+                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11' and " + strGetOracleSQLIn + "";
                     }
                     else
                     {
                         updateCount = 0;
-                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.creationtime ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11'";
+                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-11-11'";
                     }
                 }
                 DataSet Bom = OracleHelper.ExecuteDataset(sql);
@@ -450,7 +472,7 @@ namespace NcDatabaseToSQL
 
                 if (existResult == 0)
                 {
-                    sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2020-11-11'";
+                    sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code clinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2020-11-11'";
                 }
                 else
                 {
