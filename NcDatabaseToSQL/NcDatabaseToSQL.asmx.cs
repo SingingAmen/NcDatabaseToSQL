@@ -184,34 +184,33 @@ namespace NcDatabaseToSQL
                 case "ywdjdr":
                     //采购入库
                     msg = GetPurchaseinToSql() + "/";
+                    GetU8SVApiUrlApi("cgrkapi");
                     //材料出库
                     msg = msg + GetMaterialToSql() + "/";
+                    GetU8SVApiUrlApi("clckapi");
                     //产成品入库
                     msg = msg + GetFinprodInToSql() + "/";
+                    GetU8SVApiUrlApi("ccprkapi");
                     //其他入库
                     msg = msg + GetIAi4billToSql() + "/";
+                    GetU8SVApiUrlApi("qtrkdapi");
                     //其他出库
                     msg = msg + GetIAi7billToSql() + "/";
+                    GetU8SVApiUrlApi("qtckdapi");
                     //形态转换
                     msg = msg + GetIcTransformHToSql() + "/";
+                    GetU8SVApiUrlApi("xtzhdapi");
                     //调拨单
                     msg = msg + GetIcWhstransHToSql() + "/";
+                    GetU8SVApiUrlApi("dbdapi");
                     //销售出库
                     msg = msg + GetSaleOutToSql() + "/";
+                    GetU8SVApiUrlApi("fhdapi");
                     //采购发票
                     msg = msg + GetPurchaseInvoicesToSql() + "/";
+                    GetU8SVApiUrlApi("cgfpapi");
                     //销售发票
                     msg = msg + GetSoSaleinvoiceToSql() + "/";
-
-                    GetU8SVApiUrlApi("cgrkapi");
-                    GetU8SVApiUrlApi("clckapi");
-                    GetU8SVApiUrlApi("ccprkapi");
-                    GetU8SVApiUrlApi("qtrkdapi");
-                    GetU8SVApiUrlApi("qtckdapi");
-                    GetU8SVApiUrlApi("xtzhdapi");
-                    GetU8SVApiUrlApi("dbdapi");
-                    GetU8SVApiUrlApi("fhdapi");
-                    GetU8SVApiUrlApi("cgfpapi");
                     GetU8SVApiUrlApi("xsfpapi");
                     break;
                 default:
