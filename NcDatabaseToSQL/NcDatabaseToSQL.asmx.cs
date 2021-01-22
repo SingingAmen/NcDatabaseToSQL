@@ -245,6 +245,53 @@ namespace NcDatabaseToSQL
         }
 
         /// <summary>
+        /// winform业务单据导入
+        /// 创建人：lvhe
+        /// 创建时间：2021-01-21 00:12:07
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        [WebMethod]
+        public string NcInsertToSqlForWinform(string date)
+        {
+            string[] s = date.Split('-');
+            startTime = GetCurMonthFirstDay(s[0], s[1]).ToString("yyyy-MM-dd");
+            endTime = GetCurMonthLastDay(s[0], s[1]).ToString("yyyy-MM-dd");
+            string msg = "";
+            //采购入库
+            msg = GetPurchaseinToSql() + "/";
+            GetU8SVApiUrlApi("cgrkapi");
+            //材料出库
+            msg = msg + GetMaterialToSql() + "/";
+            GetU8SVApiUrlApi("clckapi");
+            //产成品入库
+            msg = msg + GetFinprodInToSql() + "/";
+            GetU8SVApiUrlApi("ccprkapi");
+            //其他入库
+            msg = msg + GetIAi4billToSql() + "/";
+            GetU8SVApiUrlApi("qtrkdapi");
+            //其他出库
+            msg = msg + GetIAi7billToSql() + "/";
+            GetU8SVApiUrlApi("qtckdapi");
+            //形态转换
+            msg = msg + GetIcTransformHToSql() + "/";
+            GetU8SVApiUrlApi("xtzhdapi");
+            //调拨单
+            msg = msg + GetIcWhstransHToSql() + "/";
+            GetU8SVApiUrlApi("dbdapi");
+            //销售出库
+            msg = msg + GetSaleOutToSql() + "/";
+            GetU8SVApiUrlApi("fhdapi");
+            //采购发票
+            msg = msg + GetPurchaseInvoicesToSql() + "/";
+            GetU8SVApiUrlApi("cgfpapi");
+            //销售发票
+            msg = msg + GetSoSaleinvoiceToSql() + "/";
+            GetU8SVApiUrlApi("xsfpapi");
+            return msg;
+        }
+
+        /// <summary>
         /// 从nc获取采购发票数据插入到sql
         /// 创建人：lvhe
         /// 创建时间：2019年10月13日 22:59:30
@@ -2750,6 +2797,33 @@ namespace NcDatabaseToSQL
         public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {   // 总是接受  
             return true;
+        }
+
+
+        /// <summary>
+        /// 获取指定年月的第一天
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="mon"></param>
+        /// <returns></returns>
+
+        public static DateTime GetCurMonthFirstDay(string year, string mon)
+        {
+            DateTime AssemblDate = Convert.ToDateTime(year + "-" + mon + "-" + "01");  // 组装当前指定月份
+            return AssemblDate.AddDays(1 - AssemblDate.Day);  // 返回指定当前月份的第一天
+        }
+
+        /// <summary>
+        /// 获取指定年月的最后一天
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="mon"></param>
+        /// <returns></returns>
+
+        public static DateTime GetCurMonthLastDay(string year, string mon)
+        {
+            DateTime AssemblDate = Convert.ToDateTime(year + "-" + mon + "-" + "01");  // 组装当前指定月份
+            return AssemblDate.AddDays(1 - AssemblDate.Day).AddMonths(1).AddDays(-1);  // 返回指定当前月份的最后一天
         }
         #endregion
 

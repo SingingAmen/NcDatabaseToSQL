@@ -541,7 +541,8 @@ namespace NcDatabaseToSQL
             try
             {
                 //获取转库入库数据
-                sql = "select '转库入库' cbustype,A1.cInvCode cInvCode,isnull(SUM(A1.iTVQuantity),0) iQuantity,A.ciwhcode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from TransVouch A left join TransVouchs A1 on A.ID=A1.ID  left join Warehouse A2 on A2.cWhCode=A.ciwhcode WHERE Convert(nvarchar(7),A.dTVDate,121)='" + queryDate + "' group by A1.cInvCode,A.ciwhcode,A2.cWhName";
+                //sql = "select '转库入库' cbustype,A1.cInvCode cInvCode,isnull(SUM(A1.iTVQuantity),0) iQuantity,A.ciwhcode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from TransVouch A left join TransVouchs A1 on A.ID=A1.ID  left join Warehouse A2 on A2.cWhCode=A.ciwhcode WHERE Convert(nvarchar(7),A.dTVDate,121)='" + queryDate + "' group by A1.cInvCode,A.ciwhcode,A2.cWhName";
+                sql = "select '转库入库' cbustype,A1.cInvCode cInvCode,isnull(SUM(A1.iTVQuantity),0) iQuantity,A.cOWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from TransVouch A left join TransVouchs A1 on A.ID=A1.ID  left join Warehouse A2 on A2.cWhCode=A.cOWhCode WHERE Convert(nvarchar(7),A.dTVDate,121)='" + queryDate + "'group by A1.cInvCode,A.cOWhCode,A2.cWhName";
 
                 //获取转库入库数据
                 DataSet TransVouch = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
