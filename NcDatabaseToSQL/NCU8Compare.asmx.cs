@@ -88,6 +88,7 @@ namespace NcDatabaseToSQL
                     GetGeneraloutToSql();
                     GetGeneralinToSql();
                     GetTransformToSql();
+                    GetFinprodInToSql();//产成品入库
                     msg = Ncu8Compare();
                 }
                 if (dataType == "采购发票")
@@ -647,6 +648,46 @@ namespace NcDatabaseToSQL
             {
 
                 result = "其他入库插入错误：" + e.Message;
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// 从u8获取产成品入库单单据
+        /// 创建人：lvhe
+        /// 创建时间：2021-01-23 21:59:56
+        /// </summary>
+        /// <returns></returns>
+        private string GetFinprodInToSql()
+        {
+            string result = "";
+            string sql = "";
+            StringBuilder strbu = new StringBuilder();
+            try
+            {
+                //获取其他出库单数据
+                sql = "select '产成品入库' cbustype,A1.cInvCode cInvCode,SUM(A1.iQuantity) iQuantity,A.cWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from rdrecord10 A left join rdrecords10 A1 on A.ID=A1.ID left join Warehouse A2 on A2.cWhCode=A.cWhCode WHERE Convert(nvarchar(7),A.dDate,121)='" + queryDate + "' group by A1.cInvCode,A.cWhCode,A2.cWhName";
+
+                //获取其他出库单数据
+                DataSet FinprodIn = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
+
+                //获取其他出库单数据
+                sql = "SELECT '产成品入库' cbustype,A2.code cinvcode,nvl(sum(A1.nassistnum),0) iQuantity,A5.code publicsec1,A5.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_finprodin_h A left join ic_finprodin_b A1 on A1.cgeneralhid = A.cgeneralhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  left join bd_stordoc A5 on A5.pk_stordoc=A.cwarehouseid where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') group by A2.code,A5.code,A5.name";
+
+                //获取其他出库单数据
+                DataSet FinprodIns = OracleHelper.ExecuteDataset(sql);
+
+                StringBuilder str = DataSetToArrayList.DataSetToArrayLists(FinprodIn, "Spl_U8DBData");
+                SqlHelper.ExecuteNonQuery(str.ToString());
+
+                StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(FinprodIns, "Spl_NCDBData");
+                SqlHelper.ExecuteNonQuery(strs.ToString());
+            }
+            catch (Exception e)
+            {
+
+                result = "产成品入库插入错误：" + e.Message;
             }
             return result;
         }
