@@ -89,6 +89,7 @@ namespace NcDatabaseToSQL
                     GetGeneralinToSql();
                     GetTransformToSql();
                     GetFinprodInToSql();//产成品入库
+                    GetMaterialToSql();//材料出库
                     msg = Ncu8Compare();
                 }
                 if (dataType == "采购发票")
@@ -709,13 +710,13 @@ namespace NcDatabaseToSQL
             try
             {
                 //获取其他出库单数据
-                sql = "select '形态转换单' cbustype,A.cAVCode docNo,A1.cInvCode cInvCode,SUM(A1.iAVQuantity) iQuantity,A1.cWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from AssemVouch A left join AssemVouchs A1 on A.ID=A1.ID left join Warehouse A2 on A2.cWhCode=A.cWhCode WHERE Convert(nvarchar(7),A.dAVDate,121)='" + queryDate + "' group by A1.cInvCode,A1.cWhCode,A2.cWhName,A.cAVCode";
+                sql = "select '形态转换单' cbustype,A.cAVCode docNo,A1.cInvCode cInvCode,SUM(A1.iAVQuantity) iQuantity,A1.cWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from AssemVouch A left join AssemVouchs A1 on A.ID=A1.ID left join Warehouse A2 on A2.cWhCode=A1.cWhCode WHERE Convert(nvarchar(7),A.dAVDate,121)='" + queryDate + "' group by A1.cInvCode,A1.cWhCode,A2.cWhName,A.cAVCode";
 
                 //获取其他出库单数据
                 DataSet Generalout = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
 
                 //获取其他出库单数据
-                sql = "select '形态转换单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A5.code publicsec1,A5.name publicsec1,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_transform_h A left join ic_transform_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc left join bd_stordoc A5 on A5.pk_stordoc = A1.cbodywarehouseid where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,7)= '" + queryDate + "' and substr(A2.code,0,4) != '0915' and A5.code not in('1001A1100000000T5S5Z','1001A11000000003CYSY') group by A2.code,A5.code,A5.name,A.vbillcode";
+                sql = "select '形态转换单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A5.code publicsec1,A5.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_transform_h A left join ic_transform_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc left join bd_stordoc A5 on A5.pk_stordoc = A1.cbodywarehouseid where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,7)= '" + queryDate + "' and substr(A2.code,0,4) != '0915' and A5.code not in('1001A1100000000T5S5Z','1001A11000000003CYSY') group by A2.code,A5.code,A5.name,A.vbillcode";
 
                 //获取其他出库单数据
                 DataSet GeneraloutLine = OracleHelper.ExecuteDataset(sql);
@@ -730,6 +731,47 @@ namespace NcDatabaseToSQL
             {
 
                 result = "形态转换单插入错误：" + e.Message;
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// 从U8获取材料出库单数据
+        /// 创建人：lvhe
+        /// 创建时间：2021-01-26 23:42:19
+        /// </summary>
+        /// <returns></returns>
+        [WebMethod]
+        private string GetMaterialToSql()
+        {
+            string result = "";
+            string sql = "";
+            StringBuilder strbu = new StringBuilder();
+            try
+            {
+                //获取材料出库单数据
+                sql = "select '材料出库' cbustype,A.cCode docNo,A1.cInvCode cInvCode,SUM(A1.iQuantity) iQuantity,A.cWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from RdRecord11 A left join RdRecords11 A1 on A.ID = A1.ID left join Warehouse A2 on A2.cWhCode = A.cWhCode WHERE Convert(nvarchar(7), A.dDate, 121) = '" + queryDate + "' group by A1.cInvCode,A.cWhCode,A2.cWhName,A.cCode";
+
+                //获取材料出库单数据
+                DataSet Material = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
+
+                //获取材料出库单数据
+                sql = "select '材料出库' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A5.code publicsec1,A5.name publicsec2,to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') as CreateTime FROM ic_material_h A left join ic_material_b A1 on A1.cgeneralhid = A.cgeneralhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc left join bd_stordoc A5 on A5.pk_stordoc = A1.cbodywarehouseid where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,7)= '" + queryDate + "' and substr(A2.code,0,4) != '0915' and A5.code not in('1001A1100000000T5S5Z', '1001A11000000003CYSY') group by A2.code,A5.code,A5.name,A.vbillcode";
+
+                //获取材料出库单数据
+                DataSet Materials = OracleHelper.ExecuteDataset(sql);
+
+                StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Material, "Spl_U8DBData");
+                SqlHelper.ExecuteNonQuery(str.ToString());
+
+                StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(Materials, "Spl_NCDBData");
+                SqlHelper.ExecuteNonQuery(strs.ToString());
+            }
+            catch (Exception e)
+            {
+
+                result = "材料出库单插入错误：" + e.Message;
             }
             return result;
         }
@@ -780,6 +822,12 @@ namespace NcDatabaseToSQL
                 sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] where docNo not in(select docNo from[Spl_NCDBData] where cbustype = '形态转换单') and cbustype = '形态转换单' ";
                 sql += " union all ";
                 sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from[Spl_U8DBData] where cbustype = '形态转换单') and cbustype = '形态转换单'  ";
+
+                //材料出库
+                sql += " union all ";
+                sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] where docNo not in(select docNo from[Spl_NCDBData] where cbustype = '材料出库') and cbustype = '材料出库' ";
+                sql += " union all ";
+                sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from[Spl_U8DBData] where cbustype = '材料出库') and cbustype = '材料出库'  ";
                 //产成品入库
                 sql += " union all ";
                 sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] where docNo not in(select docNo from[Spl_NCDBData] where cbustype = '产成品入库') and cbustype = '产成品入库' ";
