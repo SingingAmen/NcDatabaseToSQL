@@ -543,13 +543,13 @@ namespace NcDatabaseToSQL
             {
                 //获取转库入库数据
                 //sql = "select '转库入库' cbustype,A1.cInvCode cInvCode,isnull(SUM(A1.iTVQuantity),0) iQuantity,A.ciwhcode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from TransVouch A left join TransVouchs A1 on A.ID=A1.ID  left join Warehouse A2 on A2.cWhCode=A.ciwhcode WHERE Convert(nvarchar(7),A.dTVDate,121)='" + queryDate + "' group by A1.cInvCode,A.ciwhcode,A2.cWhName";
-                sql = "select '转库入库' cbustype,A.cTVCode docNo,A1.cInvCode cInvCode,isnull(SUM(A1.iTVQuantity),0) iQuantity,A.cOWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from TransVouch A left join TransVouchs A1 on A.ID=A1.ID  left join Warehouse A2 on A2.cWhCode=A.cOWhCode WHERE Convert(nvarchar(7),A.dTVDate,121)='" + queryDate + "'group by A1.cInvCode,A.cOWhCode,A2.cWhName,A.cTVCode";
+                sql = "select '调拨单' cbustype,A.cTVCode docNo,A1.cInvCode cInvCode,isnull(SUM(A1.iTVQuantity),0) iQuantity,A.cOWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from TransVouch A left join TransVouchs A1 on A.ID=A1.ID  left join Warehouse A2 on A2.cWhCode=A.cOWhCode WHERE Convert(nvarchar(7),A.dTVDate,121)='" + queryDate + "'group by A1.cInvCode,A.cOWhCode,A2.cWhName,A.cTVCode";
 
                 //获取转库入库数据
                 DataSet TransVouch = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
 
                 //获取转库入库数据
-                sql = "select '转库入库' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A5.code publicsec1,A5.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc left join bd_stordoc A5 on A5.pk_stordoc = A.cwarehouseid where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY') GROUP BY A2.code,A5.code,A5.name,A.vbillcode";
+                sql = "select '调拨单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A5.code publicsec1,A5.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc left join bd_stordoc A5 on A5.pk_stordoc = A.cwarehouseid where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY') GROUP BY A2.code,A5.code,A5.name,A.vbillcode";
 
                 //获取转库入库数据
                 DataSet TransVouchs = OracleHelper.ExecuteDataset(sql);
@@ -565,7 +565,7 @@ namespace NcDatabaseToSQL
             catch (Exception e)
             {
 
-                result = "转库入库插入错误：" + e.Message;
+                result = "调拨单插入错误：" + e.Message;
             }
             return result;
         }
@@ -762,9 +762,9 @@ namespace NcDatabaseToSQL
                 sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from[Spl_U8DBData] where cbustype = '销售出库') and cbustype = '销售出库'  ";
                 //转库入库
                 sql += " union all ";
-                sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] where docNo not in(select docNo from[Spl_NCDBData] where cbustype = '转库入库') and cbustype = '转库入库' ";
+                sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] where docNo not in(select docNo from[Spl_NCDBData] where cbustype = '调拨单') and cbustype = '调拨单' ";
                 sql += " union all ";
-                sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from[Spl_U8DBData] where cbustype = '转库入库') and cbustype = '转库入库'  ";
+                sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from[Spl_U8DBData] where cbustype = '调拨单') and cbustype = '调拨单'  ";
                 //其他出库单
                 sql += " union all ";
                 sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] where docNo not in(select docNo from[Spl_NCDBData] where cbustype = '其他出库单') and cbustype = '其他出库单' ";
