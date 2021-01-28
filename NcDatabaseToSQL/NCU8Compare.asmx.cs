@@ -628,7 +628,7 @@ namespace NcDatabaseToSQL
             try
             {
                 //获取其他出库单数据
-                sql = "select '其他入库单' cbustype,A.cCode dcoNo,A1.cInvCode cInvCode,SUM(A1.iQuantity) iQuantity,A.cWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from RdRecord08 A left join rdrecords08 A1 on A.ID=A1.ID left join Warehouse A2 on A2.cWhCode=A.cWhCode WHERE Convert(nvarchar(7),A.dDate,121)='" + queryDate + "' and A.cRdCode NOT IN ('107','105') group by A1.cInvCode,A.cWhCode,A2.cWhName,A.cCode";
+                sql = "select '其他入库单' cbustype,A.cCode docNo,A1.cInvCode cInvCode,SUM(A1.iQuantity) iQuantity,A.cWhCode publicsec1,A2.cWhName publicsec2,GETDATE() as CreateTime from RdRecord08 A left join rdrecords08 A1 on A.ID=A1.ID left join Warehouse A2 on A2.cWhCode=A.cWhCode WHERE Convert(nvarchar(7),A.dDate,121)='" + queryDate + "' and A.cRdCode NOT IN ('107','105') group by A1.cInvCode,A.cWhCode,A2.cWhName,A.cCode";
 
                 //获取其他出库单数据
                 DataSet Generalout = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
@@ -650,7 +650,6 @@ namespace NcDatabaseToSQL
 
                 result = "其他入库插入错误：" + e.Message;
             }
-            return result;
             return result;
         }
 
