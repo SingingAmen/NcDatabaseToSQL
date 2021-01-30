@@ -283,13 +283,13 @@ namespace NcDatabaseToSQL
             try
             {
                 //获取采购发票数据
-                sql = "select '采购发票' cbustype,A.cDefine11 docNo,A.cDefine11 publicsec4,A1.cInvCode cInvCode,A.cVenCode publicsec1,A2.cVenName publicsec3,isnull(SUM(A1.iPBVQuantity),0) iQuantity,isnull(SUM(A1.iSum),0) publicsec2,GETDATE() as CreateTime from PurBillVouch A left join PurBillVouchs A1 on A.PBVID=A1.PBVID left join Vendor A2 on A.cVenCode=A2.cVenCode WHERE Convert(nvarchar(7),A.dPBVDate,121)='" + queryDate + "' GROUP BY A1.cInvCode,A.cPBVBillType,A.cVenCode,A2.cVenName,A.cDefine11";
+                sql = "select '采购发票' cbustype,ISNULL(A.cDefine11,A.cPBVCode) docNo,ISNULL(A.cDefine11,A.cPBVCode) publicsec4,A1.cInvCode cInvCode,A.cVenCode publicsec1,A2.cVenName publicsec3,isnull(SUM(A1.iPBVQuantity),0) iQuantity,Convert(decimal(18,2),isnull(SUM(A1.iSum),0)) publicsec2,GETDATE() as CreateTime from PurBillVouch A left join PurBillVouchs A1 on A.PBVID=A1.PBVID left join Vendor A2 on A.cVenCode=A2.cVenCode WHERE Convert(nvarchar(7),A.dPBVDate,121)='" + queryDate + "' GROUP BY A1.cInvCode,A.cPBVBillType,A.cVenCode,A2.cVenName,A.cDefine11,A.cPBVCode";
 
                 //获取采购发票数据
                 DataSet PurBillVouch = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
 
                 //获取采购发票数据
-                sql = "select '采购发票' cbustype,A.vbillcode docNo,A.vbillcode publicsec4,A2.code cInvCode,A3.code publicsec1,A3.Name publicsec3,nvl(sum(A1.nastnum),0) iQuantity,nvl(sum(A1.ntaxmny),0) publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime from po_invoice A left join po_invoice_b A1 on A.PK_INVOICE = A1.PK_INVOICE and A1.DR!=1 left join bd_material A2 on A1.pk_material = A2.pk_material left join bd_supplier A3 on A.PK_SUPPLIER=A3.PK_SUPPLIER where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.taudittime,0,7)= '" + queryDate + "' and A.fbillstatus = 3 and substr(A2.code,0,4) != '0915' group by A2.code,A.Vtrantypecode,A3.code,A3.Name,A.vbillcode";
+                sql = "select '采购发票' cbustype,A.vbillcode docNo,A.vbillcode publicsec4,A2.code cInvCode,A3.code publicsec1,A3.Name publicsec3,nvl(sum(A1.nastnum),0) iQuantity,decode(nvl(sum(A1.ntaxmny),0),0,'0.00',trim(to_char(nvl(sum(A1.ntaxmny),0),'9999999.99'))) publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime from po_invoice A left join po_invoice_b A1 on A.PK_INVOICE = A1.PK_INVOICE and A1.DR!=1 left join bd_material A2 on A1.pk_material = A2.pk_material left join bd_supplier A3 on A.PK_SUPPLIER=A3.PK_SUPPLIER where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.taudittime,0,7)= '" + queryDate + "' and A.fbillstatus = 3 and substr(A2.code,0,4) != '0915' group by A2.code,A.Vtrantypecode,A3.code,A3.Name,A.vbillcode";
                 //获取采购发票数据
                 DataSet PurBillVouchs = OracleHelper.ExecuteDataset(sql);
 
@@ -371,13 +371,13 @@ namespace NcDatabaseToSQL
             try
             {
                 //获取采购发票数据
-                sql = "select '销售发票' cbustype,A.cSBVCode docNo,A.cSBVCode publicsec4,A1.cInvCode cInvCode,A.cCusCode publicsec1,A.cCusName publicsec3,isnull(SUM(A1.iQuantity),0) iQuantity,isnull(SUM(A1.iSum),0) publicsec2,GETDATE() as CreateTime from SaleBillVouch A left join SaleBillVouchs A1 on A1.SBVID=A.SBVID WHERE Convert(nvarchar(7),A.dDate,121)='" + queryDate + "' GROUP BY A1.cInvCode,A.cCusCode,A.cCusName,A.cSBVCode";
+                sql = "select '销售发票' cbustype,A.cSBVCode docNo,A.cSBVCode publicsec4,A1.cInvCode cInvCode,A.cCusCode publicsec1,A.cCusName publicsec3,isnull(SUM(A1.iQuantity),0) iQuantity,Convert(decimal(18,2),isnull(SUM(A1.iSum),0)) publicsec2,GETDATE() as CreateTime from SaleBillVouch A left join SaleBillVouchs A1 on A1.SBVID=A.SBVID WHERE Convert(nvarchar(7),A.dDate,121)='" + queryDate + "' GROUP BY A1.cInvCode,A.cCusCode,A.cCusName,A.cSBVCode";
 
                 //获取采购发票数据
                 DataSet PurBillVouch = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
 
                 //获取采购发票数据
-                sql = "select '销售发票' cbustype,A.vbillcode docNo,A.vbillcode publicsec4,A2.code cInvCode,A3.Code publicsec1,A3.Name publicsec3,nvl(sum(A1.nnum),0) iQuantity,nvl(sum(A1.ntaxmny),0) publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime from so_saleinvoice A left join so_saleinvoice_b A1 on A.csaleinvoiceid = A1.csaleinvoiceid and A1.dr!=1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_customer A3 on  A.cinvoicecustid=A3.pk_customer where A.PK_ORG = '0001A110000000001V70' and A.dr != 1 AND substr(A.dbilldate,0,7)= '" + queryDate + "' and substr(A2.code,0,4) != '0915' and A1.csendstordocid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') GROUP BY A2.code,A3.Code,A3.Name,A.vbillcode";
+                sql = "select '销售发票' cbustype,A.vbillcode docNo,A.vbillcode publicsec4,A2.code cInvCode,A3.Code publicsec1,A3.Name publicsec3,nvl(sum(A1.nnum),0) iQuantity,decode(nvl(sum(A1.ntaxmny),0),0,'0.00',trim(to_char(nvl(sum(A1.ntaxmny),0),'9999999.99'))) publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime from so_saleinvoice A left join so_saleinvoice_b A1 on A.csaleinvoiceid = A1.csaleinvoiceid and A1.dr!=1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_customer A3 on  A.cinvoicecustid=A3.pk_customer where A.PK_ORG = '0001A110000000001V70' and A.dr != 1 AND substr(A.dbilldate,0,7)= '" + queryDate + "' and substr(A2.code,0,4) != '0915' and A1.csendstordocid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') GROUP BY A2.code,A3.Code,A3.Name,A.vbillcode";
 
                 //获取采购发票数据
                 DataSet PurBillVouchs = OracleHelper.ExecuteDataset(sql);
@@ -593,7 +593,7 @@ namespace NcDatabaseToSQL
                 DataSet Generalout = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
 
                 //获取其他出库单数据
-                sql = "select '其他出库单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nshouldassistnum),0) iQuantity,A6.code publicsec1,A6.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_generalout_h A left join ic_generalout_b A1 on A1.cgeneralhid = A.cgeneralhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A3.pk_marbasclass = A2.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc = A2.pk_measdoc left join bd_billtype A5 on A5.pk_billtypeid = A.ctrantypeid left join bd_stordoc A6 on A6.pk_stordoc = A.cwarehouseid where  (A.vtrantypecode not IN ('4I-02','4I-06')) AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A2.CODE NOT LIKE '0915%' and A6.CODE NOT IN('PPG','STJGC') and A.PK_ORG='0001A110000000001V70' group by A2.code,A6.code,A6.name,A.vbillcode";
+                sql = "select '其他出库单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A6.code publicsec1,A6.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_generalout_h A left join ic_generalout_b A1 on A1.cgeneralhid = A.cgeneralhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A3.pk_marbasclass = A2.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc = A2.pk_measdoc left join bd_billtype A5 on A5.pk_billtypeid = A.ctrantypeid left join bd_stordoc A6 on A6.pk_stordoc = A.cwarehouseid where  (A.vtrantypecode not IN ('4I-02','4I-06')) AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A2.CODE NOT LIKE '0915%' and A6.CODE NOT IN('PPG','STJGC') and A.PK_ORG='0001A110000000001V70' group by A2.code,A6.code,A6.name,A.vbillcode";
 
                 //获取其他出库单数据
                 DataSet GeneraloutLine = OracleHelper.ExecuteDataset(sql);
@@ -634,7 +634,7 @@ namespace NcDatabaseToSQL
                 DataSet Generalout = SqlHelperForU8.ExecuteDataset(conneU8ctionString, CommandType.Text, sql);
 
                 //获取其他出库单数据
-                sql = "select '其他入库单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nshouldassistnum),0) iQuantity,A6.code publicsec1,A6.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_generalin_h A left join ic_generalin_b A1 on A1.cgeneralhid = A.cgeneralhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A3.pk_marbasclass = A2.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc = A2.pk_measdoc left join bd_billtype A5 on A5.pk_billtypeid = A.ctrantypeid left join bd_stordoc A6 on A6.pk_stordoc = A.cwarehouseid where  (A.vtrantypecode not IN ('4A-02','4A-06')) AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A2.CODE NOT LIKE '0915%' and A6.CODE NOT IN('PPG','STJGC') and A.PK_ORG='0001A110000000001V70' group by A2.code,A6.code,A6.name,A.vbillcode";
+                sql = "select '其他入库单' cbustype,A.vbillcode docNo,A2.code cInvCode,nvl(sum(A1.nassistnum),0) iQuantity,A6.code publicsec1,A6.name publicsec2,to_char(sysdate,'yyyy-mm-dd hh24:mi:ss')  as CreateTime FROM ic_generalin_h A left join ic_generalin_b A1 on A1.cgeneralhid = A.cgeneralhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 on A3.pk_marbasclass = A2.pk_marbasclass left join bd_measdoc A4 on A4.pk_measdoc = A2.pk_measdoc left join bd_billtype A5 on A5.pk_billtypeid = A.ctrantypeid left join bd_stordoc A6 on A6.pk_stordoc = A.cwarehouseid where  (A.vtrantypecode not IN ('4A-02','4A-06')) AND substr(A.dbilldate,0,7)= '" + queryDate + "' and A2.CODE NOT LIKE '0915%' and A6.CODE NOT IN('PPG','STJGC') and A.PK_ORG='0001A110000000001V70' group by A2.code,A6.code,A6.name,A.vbillcode";
 
                 //获取其他出库单数据
                 DataSet GeneraloutLine = OracleHelper.ExecuteDataset(sql);
@@ -859,12 +859,12 @@ namespace NcDatabaseToSQL
             {
                 string delstrApps = "delete from  Spl_NCU8Compare where cbustype='采购发票'";
                 SqlHelperForApps.ExecuteNonQuerys(delstrApps);
-                string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(Convert(decimal(18,2),A.publicsec2),0) publicsec2,isnull(Convert(decimal(18,2),A1.publicsec2),0) publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.docNo=A1.docNo and  A.publicsec1=A1.publicsec1 where A.cbustype='采购发票' or A1.cbustype='采购发票' ";
+                string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,A.publicsec2 publicsec2,A1.publicsec2 publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 where (A.cbustype='采购发票' or A1.cbustype='采购发票') and A.docNo = A1.docNo ";
 
                 sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,Convert(decimal(18,2),publicsec2),'0' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '采购发票') and cbustype = '采购发票' ";
+                sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,'0' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '采购发票') and cbustype = '采购发票' ";
                 sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0' publicsec2,Convert(decimal(18,2),publicsec2) publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '采购发票') and cbustype = '采购发票'  ";
+                sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0' publicsec2,publicsec2 publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '采购发票') and cbustype = '采购发票'  ";
 
                 //获取采购入库汇总数据
                 DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql2);
@@ -892,12 +892,12 @@ namespace NcDatabaseToSQL
             {
                 string delstrApps = "delete from  Spl_NCU8Compare where cbustype='销售发票'";
                 SqlHelperForApps.ExecuteNonQuerys(delstrApps);
-                string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(Convert(decimal(18,2),A.publicsec2),0) publicsec2,isnull(Convert(decimal(18,2),A1.publicsec2),0) publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype = A1.cbustype and A.cinvcode = A1.cinvcode and A.docNo = A1.docNo and A.publicsec1 = A1.publicsec1 where A.cbustype = '销售发票' or A1.cbustype = '销售发票' ";
+                string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,A.publicsec2 publicsec2,A1.publicsec2 publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype = A1.cbustype and A.cinvcode = A1.cinvcode  and A.publicsec1 = A1.publicsec1 where (A.cbustype = '销售发票' or A1.cbustype = '销售发票') and A.docNo = A1.docNo ";
                 //销售发票
                 sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,Convert(decimal(18,2),publicsec2),'0' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '销售发票') and cbustype = '销售发票' ";
+                sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,'0.00' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '销售发票') and cbustype = '销售发票' ";
                 sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0' publicsec2,Convert(decimal(18,2),publicsec2) publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '销售发票') and cbustype = '销售发票'  ";
+                sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0.00' publicsec2,publicsec2 publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '销售发票') and cbustype = '销售发票'  ";
 
                 //获取采购入库汇总数据
                 DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql2);
