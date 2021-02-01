@@ -859,13 +859,15 @@ namespace NcDatabaseToSQL
             {
                 string delstrApps = "delete from  Spl_NCU8Compare where cbustype='采购发票'";
                 SqlHelperForApps.ExecuteNonQuerys(delstrApps);
-                string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,A.publicsec2 publicsec2,A1.publicsec2 publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 where (A.cbustype='采购发票' or A1.cbustype='采购发票') and A.docNo = A1.docNo ";
+                //string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,A.publicsec2 publicsec2,A1.publicsec2 publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 where (A.cbustype='采购发票' or A1.cbustype='采购发票') and A.docNo = A1.docNo ";
 
-                sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,'0' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '采购发票') and cbustype = '采购发票' ";
-                sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0' publicsec2,publicsec2 publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '采购发票') and cbustype = '采购发票'  ";
+                //sql2 += " union all ";
+                //sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,'0' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '采购发票') and cbustype = '采购发票' ";
+                //sql2 += " union all ";
+                //sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0' publicsec2,publicsec2 publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '采购发票') and cbustype = '采购发票'  ";
 
+
+                string sql2 = "select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,'0.00') publicsec2,isnull(A1.publicsec2,'0.00') publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,'') publicsec8,isnull(A1.docno,'') publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A full join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo = A1.docNo where(A.cbustype = '采购发票' or A1.cbustype = '采购发票') ";
                 //获取采购入库汇总数据
                 DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql2);
                 StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
@@ -892,12 +894,15 @@ namespace NcDatabaseToSQL
             {
                 string delstrApps = "delete from  Spl_NCU8Compare where cbustype='销售发票'";
                 SqlHelperForApps.ExecuteNonQuerys(delstrApps);
-                string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,A.publicsec2 publicsec2,A1.publicsec2 publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype = A1.cbustype and A.cinvcode = A1.cinvcode  and A.publicsec1 = A1.publicsec1 where (A.cbustype = '销售发票' or A1.cbustype = '销售发票') and A.docNo = A1.docNo ";
-                //销售发票
-                sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,'0.00' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '销售发票') and cbustype = '销售发票' ";
-                sql2 += " union all ";
-                sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0.00' publicsec2,publicsec2 publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '销售发票') and cbustype = '销售发票'  ";
+                //string sql2 = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,A.publicsec2 publicsec2,A1.publicsec2 publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype = A1.cbustype and A.cinvcode = A1.cinvcode  and A.publicsec1 = A1.publicsec1 where (A.cbustype = '销售发票' or A1.cbustype = '销售发票') and A.docNo = A1.docNo ";
+                ////销售发票
+                //sql2 += " union all ";
+                //sql2 += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,'0.00' publicsec5,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '销售发票') and cbustype = '销售发票' ";
+                //sql2 += " union all ";
+                //sql2 += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,'0.00' publicsec2,publicsec2 publicsec5,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from[Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '销售发票') and cbustype = '销售发票'  ";
+
+
+                string sql2 = "select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,'0.00') publicsec2,isnull(A1.publicsec2,'0.00') publicsec5,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,'') publicsec8,isnull(A1.docno,'') publicsec9,GETDATE() as CreateTime from[Spl_U8DBData] A full join[Spl_ncDBData] A1 on A.cbustype = A1.cbustype and A.cinvcode = A1.cinvcode  and A.publicsec1 = A1.publicsec1 and A.docNo = A1.docNo where(A.cbustype = '销售发票' or A1.cbustype = '销售发票') ";
 
                 //获取采购入库汇总数据
                 DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql2);

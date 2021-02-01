@@ -185,6 +185,9 @@ namespace NcDatabaseToSQL
                 case "ckxx":
                     msg = GetWhToSql();
                     break;
+                case "xscktest":
+                    msg = GetSaleOutToSqlTest();
+                    break;
                 case "ywdjdr":
                     //采购入库
                     msg = GetPurchaseinToSql() + "/";
@@ -462,7 +465,7 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取采购发票头数据
-                    sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2021-01-10' ";
+                    sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-01-01' ";
                 }
                 else
                 {
@@ -473,7 +476,7 @@ namespace NcDatabaseToSQL
                     SqlHelper.ExecuteNonQuerys(delstr);
                     SqlHelper.ExecuteNonQuerys(delstr3);
 
-                    string sqlnew = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2021-01-10' ";
+                    string sqlnew = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-01-01' ";
                     DataSet BomNew = OracleHelper.ExecuteDataset(sqlnew);
                     StringBuilder instetsql = DataSetToArrayList.DataSetToArrayLists(BomNew, "BomNew");
                     SqlHelper.ExecuteNonQuery(instetsql.ToString());
@@ -506,12 +509,12 @@ namespace NcDatabaseToSQL
                         String[] ids = strbu.ToString().Split(',');
                         strGetOracleSQLIn = getOracleSQLIn(ids, "A.cbomid");
                         //获取bom头
-                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2021-01-10' and " + strGetOracleSQLIn + "";
+                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-01-01' and " + strGetOracleSQLIn + "";
                     }
                     else
                     {
                         updateCount = 0;
-                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2021-01-10'";
+                        sql = "select distinct A.cbomid ID,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A.ts ddate,A.hversion bomversion,A.Hvdef1 bomversionexplain,A.DR dr,A.modifiedtime ts from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A.hcmaterialid left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') and substr(A2.code,1,2) !=13 AND substr(A.creationtime,0,10)  >= '2020-01-01'";
                     }
                 }
                 DataSet Bom = OracleHelper.ExecuteDataset(sql);
@@ -523,17 +526,17 @@ namespace NcDatabaseToSQL
 
                 if (existResult == 0)
                 {
-                    sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code clinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2021-01-10'";
+                    sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code clinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2020-01-01'";
                 }
                 else
                 {
                     if (updateCount > 0)
                     {
-                        sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2021-01-10'  AND " + strGetOracleSQLIn + "";
+                        sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2020-01-01'  AND " + strGetOracleSQLIn + "";
                     }
                     else
                     {
-                        sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2021-01-10'";
+                        sql = "select A.cbomid ID,A1.cbom_bid autoid,A1.vrowno doclineno,A2.code cinvcode,A2.name cinvname, A3.code cinvclass,A3.name cinvclassname,A2.materialspec cinvstd, A4.code cinvUnit,A1.nassitemnum inassitemnum,A1.ibasenum ibasenum,A1.DR dr,case when A1.bdeliver='Y' then '是' else '否' end ibdeliver,case when A1.fsupplymode=1 then '一般发料' else '定量发料' end ifsupplymode,case when A1.fbackflushtype=1 then '不倒冲' when A1.fbackflushtype=2 then '自动倒冲' else '交互式倒冲' end ifbackflushtype,case when A1.fbackflushtime=1 then '产品完工' else '工序完工' end ifbackflushtime,case when A1.bbchkitemforwr='Y' then '是' else '否' end ibbchkitemforwr,A1.cbeginperiod icbeginperiod,A1.cendperiod icendperiod,A1.vdef3 ideptcode,case when A1.vdef4='Y' then '是' else '否' end isxxjs from bd_bom A left join bd_bom_b A1 on A.cbomid=A1.cbomid left join bd_material A2 on A2.pk_material=A1.cmaterialid  left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG='0001A110000000001V70' and A.hversion not in('1.0','1.1') AND substr(A.creationtime,0,10)  >= '2020-01-01'";
                     }
                 }
                 DataSet Boms = OracleHelper.ExecuteDataset(sql);
@@ -1089,6 +1092,154 @@ namespace NcDatabaseToSQL
                 }
                 //GetU8SVApiUrlApi("fhdapi");
                 result = msg;
+            }
+            catch (Exception e)
+            {
+
+                result = "销售出库表：" + e.Message;
+            }
+            return result;
+
+        }
+
+
+        /// <summary>
+        /// 从nc获取销售出库数据插入到sql
+        /// </summary>
+        /// <returns></returns>
+        [WebMethod]
+        private string GetSaleOutToSqlTest()
+        {
+            string starttime = "插入中间表开始--" + DateTime.Now.ToString();
+            string result = "";
+            string createSql = "";
+            string tableExist = "";
+            int existResult = 0;
+            string msg = "";
+            string sql = "";
+            int updateCount = 0;
+            StringBuilder strbu = new StringBuilder();
+            string strGetOracleSQLIn = "";
+            try
+            {
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'DispatchList') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    //获取销售出库头数据
+                    sql = "select A.cgeneralhid ID,A.vbillcode code,A.dbilldate ddate,A1.Code cwhcode,A5.pk_billtypecode cstcode, A2.code custcode,A2.name custname,A3.code cdepcode,A5.code cCCCode, A.vnote remark,CASE WHEN A.ntotalnum > 0 THEN 0 ELSE 1 END AS isRed,A.modifiedtime ts  from ic_saleout_h A left join bd_stordoc A1 on A.cwarehouseid = A1.Pk_Stordoc left join bd_customer A2 on A.ccustomerid = A2.pk_customer left join org_dept A3 on A3.PK_DEPT = A.cdptid left join bd_customer A4 on A4.pk_customer=A.ccustomerid left join bd_custclass A5 on A5.pk_custclass=A4.pk_custclass left join (select cgeneralhid,csourcetranstype from ic_saleout_b group by cgeneralhid,csourcetranstype) A4 on A.cgeneralhid=A4.cgeneralhid left join bd_billtype A5 on A5.pk_billtypeid=A4.csourcetranstype where  not exists (select cgeneralhid from (select distinct pob.cgeneralhid cgeneralhid from ic_saleout_b pob left join bd_material mat on mat.pk_material = pob.cmaterialvid and nvl(mat.dr,0)=0 left join ic_saleout_h poh on poh.cgeneralhid = pob.cgeneralhid and nvl(poh.dr,0)=0 where  nvl(pob.dr,0)=0 and substr(mat.code,0,4) = '0915' and poh.PK_ORG='0001A110000000001V70'  AND substr(poh.taudittime,0,10) between '" + startTime + "' and '" + endTime + "' and poh.fbillflag=3) po  where po.cgeneralhid = A.cgeneralhid) and  A.PK_ORG='0001A110000000001V70'  AND substr(A.taudittime,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag=3 and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                }
+                else
+                {
+                    string delstr = "delete from DispatchList where id in(select ID from DispatchList where zt != 1 )";
+                    string delstr2 = "delete from DispatchLists where id in(select ID from DispatchList where zt != 1 )";
+                    SqlHelper.ExecuteNonQuerys(delstr2);
+                    SqlHelper.ExecuteNonQuerys(delstr);
+                    string str = "select id from DispatchList";
+                    DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, str);
+
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        updateCount = ds.Tables[0].Rows.Count;
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            strbu.Append(dr["id"].ToString() + ",");
+                        }
+                        strbu = strbu.Remove(strbu.Length - 1, 1);
+                        String[] ids = strbu.ToString().Split(',');
+                        strGetOracleSQLIn = getOracleSQLIn(ids, "A.cgeneralhid");
+                        //获取采购入库头数据
+                        sql = "select A.cgeneralhid ID,A.vbillcode code,A.dbilldate ddate,A1.Code cwhcode,A5.pk_billtypecode cstcode, A2.code custcode,A2.name custname,A3.code cdepcode,A5.code cCCCode, A.vnote remark,CASE WHEN A.ntotalnum > 0 THEN 0 ELSE 1 END AS isRed,A.modifiedtime ts  from ic_saleout_h A left join bd_stordoc A1 on A.cwarehouseid = A1.Pk_Stordoc left join bd_customer A2 on A.ccustomerid = A2.pk_customer left join org_dept A3 on A3.PK_DEPT = A.cdptid left join bd_customer A4 on A4.pk_customer=A.ccustomerid left join bd_custclass A5 on A5.pk_custclass=A4.pk_custclass left join (select cgeneralhid,csourcetranstype from ic_saleout_b group by cgeneralhid,csourcetranstype) A4 on A.cgeneralhid=A4.cgeneralhid left join bd_billtype A5 on A5.pk_billtypeid=A4.csourcetranstype where  not exists (select cgeneralhid from (select distinct pob.cgeneralhid cgeneralhid from ic_saleout_b pob left join bd_material mat on mat.pk_material = pob.cmaterialvid and nvl(mat.dr,0)=0 left join ic_saleout_h poh on poh.cgeneralhid = pob.cgeneralhid and nvl(poh.dr,0)=0 where  nvl(pob.dr,0)=0 and substr(mat.code,0,4) = '0915' and poh.PK_ORG='0001A110000000001V70'  AND substr(poh.taudittime,0,10) between '" + startTime + "' and '" + endTime + "' and poh.fbillflag=3) po  where po.cgeneralhid = A.cgeneralhid) and  A.PK_ORG='0001A110000000001V70'  AND substr(A.taudittime,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag=3 and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
+
+                    }
+                    else
+                    {
+                        updateCount = 0;
+                        sql = "select A.cgeneralhid ID,A.vbillcode code,A.dbilldate ddate,A1.Code cwhcode,A5.pk_billtypecode cstcode, A2.code custcode,A2.name custname,A3.code cdepcode,A5.code cCCCode, A.vnote remark,CASE WHEN A.ntotalnum > 0 THEN 0 ELSE 1 END AS isRed,A.modifiedtime ts  from ic_saleout_h A left join bd_stordoc A1 on A.cwarehouseid = A1.Pk_Stordoc left join bd_customer A2 on A.ccustomerid = A2.pk_customer left join org_dept A3 on A3.PK_DEPT = A.cdptid left join bd_customer A4 on A4.pk_customer=A.ccustomerid left join bd_custclass A5 on A5.pk_custclass=A4.pk_custclass left join (select cgeneralhid,csourcetranstype from ic_saleout_b group by cgeneralhid,csourcetranstype) A4 on A.cgeneralhid=A4.cgeneralhid left join bd_billtype A5 on A5.pk_billtypeid=A4.csourcetranstype where  not exists (select cgeneralhid from (select distinct pob.cgeneralhid cgeneralhid from ic_saleout_b pob left join bd_material mat on mat.pk_material = pob.cmaterialvid and nvl(mat.dr,0)=0 left join ic_saleout_h poh on poh.cgeneralhid = pob.cgeneralhid and nvl(poh.dr,0)=0 where  nvl(pob.dr,0)=0 and substr(mat.code,0,4) = '0915' and poh.PK_ORG='0001A110000000001V70'  AND substr(poh.taudittime,0,10) between '" + startTime + "' and '" + endTime + "' and poh.fbillflag=3) po  where po.cgeneralhid = A.cgeneralhid) and  A.PK_ORG='0001A110000000001V70'  AND substr(A.taudittime,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag=3 and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                    }
+                }
+                DataSet SaleOut = OracleHelper.ExecuteDataset(sql);
+
+                tableExist = "if object_id( 'DispatchLists') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    //获取销售出库行数据
+                    sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,A2.name cinvname,A3.code cinvclass,A3.Name cinvclassname,A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.ntaxrate itaxrate, A1.norigtaxprice iOriTaxCost,A1.nqtorigprice iOriCost,A1.norigtaxmny ioriSum, A1.norigmny iOriMoney, A1.ntaxmny isum, A1.nmny iMoney, NVL(A1.nqtprice,0) iUnitCost, A1.vnotebody remark from ic_saleout_h A left join ic_saleout_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                }
+                else
+                {
+                    if (updateCount > 0)
+                    {
+                        sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,A2.name cinvname,A3.code cinvclass,A3.Name cinvclassname,A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.ntaxrate itaxrate, A1.norigtaxprice iOriTaxCost,A1.nqtorigprice iOriCost,A1.norigtaxmny ioriSum, A1.norigmny iOriMoney, A1.ntaxmny isum, A1.nmny iMoney, NVL(A1.nqtprice,0) iUnitCost, A1.vnotebody remark from ic_saleout_h A left join ic_saleout_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
+                    }
+                    else
+                    {
+                        sql = "select A1.cgeneralhid ID,A1.cgeneralbid autoid,A1.crowno doclineno,A2.code cinvcode,A2.name cinvname,A3.code cinvclass,A3.Name cinvclassname,A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.ntaxrate itaxrate, A1.norigtaxprice iOriTaxCost,A1.nqtorigprice iOriCost,A1.norigtaxmny ioriSum, A1.norigmny iOriMoney, A1.ntaxmny isum, A1.nmny iMoney, NVL(A1.nqtprice,0) iUnitCost, A1.vnotebody remark from ic_saleout_h A left join ic_saleout_b A1 on A.cgeneralhid = A1.cgeneralhid and A1.DR != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc  where A.PK_ORG = '0001A110000000001V70' and A.DR != 1 AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 3 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                    }
+                }
+                DataSet SaleOutLine = OracleHelper.ExecuteDataset(sql);
+
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'DispatchList') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table DispatchList(ID nvarchar(30) primary key not null,code nvarchar(50),ddate nvarchar(20),cwhcode nvarchar(100),cstcode nvarchar(200),custcode nvarchar(200),custname nvarchar(200),cdepcode nvarchar(200),cCCCode nvarchar(200),remark nvarchar(500),isRed bit default 0,ts nvarchar(50),zt bit default 0,memo text)";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(SaleOut, "DispatchList");
+                    SqlHelper.ExecuteNonQuery(str.ToString());
+                    msg = "销售出库表插入成功";
+                }
+                else
+                {
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(SaleOut, "DispatchList");
+                    if (!string.IsNullOrEmpty(str.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(str.ToString());
+                        msg = "销售出库表更新成功";
+                    }
+                    else
+                    {
+                        msg = "销售出库表暂无可更新数据";
+                    }
+                }
+                tableExist = "if object_id( 'DispatchLists') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table DispatchLists(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),cinvname nvarchar(500),cinvclass nvarchar(500),cinvclassname nvarchar(500),cinvstd nvarchar(500),cinvUnit  nvarchar(500),qty decimal(28, 8),itaxrate decimal(28, 8),iOriTaxCost decimal(28, 8),iOriCost decimal(28, 8),ioriSum decimal(28, 8),	iOriMoney decimal(28, 8),	isum decimal(28, 8),iMoney decimal(28, 8),iUnitCost decimal(28, 8),remark nvarchar(100))";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(SaleOutLine, "DispatchLists");
+                    SqlHelper.ExecuteNonQuery(strs.ToString());
+                    msg = "销售出库表行插入成功";
+                }
+                else
+                {
+                    StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(SaleOutLine, "DispatchLists");
+                    if (!string.IsNullOrEmpty(strs.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(strs.ToString());
+                        msg = "销售出库表行更新成功";
+                    }
+                    else
+                    {
+                        msg = "销售出库表暂无可更新数据";
+                    }
+                }
+                string endtime = "插入中间表结束--" + DateTime.Now.ToString();
+
+                string apistarttime = "调用Api开始--" + DateTime.Now.ToString();
+
+                GetU8SVApiUrlApi("fhdapi");
+                string apiendtime = "调用Api结束--" + DateTime.Now.ToString();
+
+                result = starttime + "\r\n" + endtime + "\r\n" + apistarttime + "\r\n" + apiendtime + "\r\n" + msg;
             }
             catch (Exception e)
             {
