@@ -73,6 +73,7 @@
   <ItemGroup>
     <Content Include="GetCheckU8Materiel.asmx" />
     <Content Include="GetDocBackInfo.asmx" />
+    <Content Include="GetU8AccountCode.asmx" />
     <Content Include="NcDatabaseToSQL.asmx" />
     <Content Include="NCU8Compare.asmx" />
     <Content Include="TextFile1.txt" />
@@ -88,6 +89,10 @@
     </Compile>
     <Compile Include="GetDocBackInfo.asmx.cs">
       <DependentUpon>GetDocBackInfo.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GetU8AccountCode.asmx.cs">
+      <DependentUpon>GetU8AccountCode.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="NcDatabaseToSQL.asmx.cs">
