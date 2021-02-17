@@ -185,6 +185,14 @@ namespace NcDatabaseToSQL
                 case "ckxx":
                     msg = GetWhToSql();
                     break;
+                //部门档案
+                case "dept":
+                    msg = GetDeptToSql();
+                    break;
+                //调拨单单个执行
+                case "dbddg":
+                    msg = GetIcWhstransHToSqlDg();
+                    break;
                 case "xscktest":
                     msg = GetSaleOutToSqlTest();
                     break;
@@ -1893,17 +1901,17 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取转库单行数据
-                    sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                    sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass,A3.name cinvclassname, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
                 }
                 else
                 {
                     if (updateCount > 0)
                     {
-                        sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
+                        sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass,A3.name cinvclassname, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
                     }
                     else
                     {
-                        sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                        sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass,A3.name cinvclassname, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
                     }
                 }
                 DataSet IcWhstransHLine = OracleHelper.ExecuteDataset(sql);
@@ -1938,7 +1946,7 @@ namespace NcDatabaseToSQL
 
                 if (existResult == 0)
                 {
-                    createSql = "create table TransVouchs(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),cinvname nvarchar(500),cinvclass nvarchar(500),cinvstd nvarchar(500),cinvUnit  nvarchar(500),qty decimal(28,8),remark nvarchar(100))";
+                    createSql = "create table TransVouchs(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),cinvname nvarchar(500),cinvclass nvarchar(500),cinvclassname nvarchar(500),cinvstd nvarchar(500),cinvUnit  nvarchar(500),qty decimal(28,8),remark nvarchar(100))";
                     SqlHelper.ExecuteNonQuery(createSql);
                     StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(IcWhstransHLine, "TransVouchs");
                     SqlHelper.ExecuteNonQuery(strs.ToString());
@@ -2515,6 +2523,76 @@ namespace NcDatabaseToSQL
         }
 
 
+
+
+        /// <summary>
+        /// 从nc获取部门档案插入到sql
+        /// 创建人：lvhe
+        /// 创建时间：2021-02-17 22:07:06
+        /// </summary>
+        /// <returns></returns>
+        [WebMethod]
+        private string GetDeptToSql()
+        {
+            string result = "";
+            string createSql = "";
+            string tableExist = "";
+            int existResult = 0;
+            string msg = "";
+            string sql = "";
+            StringBuilder strbu = new StringBuilder();
+            try
+            {
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'CBO_Department') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    //获取部门档案数据
+                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1";
+                }
+                else
+                {
+                    string delstr = "delete from CBO_Department";
+                    SqlHelper.ExecuteNonQuerys(delstr);
+                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1";
+                }
+                DataSet Dept = OracleHelper.ExecuteDataset(sql);
+
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'CBO_Department') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table CBO_Department(code nvarchar(20) not null,name nvarchar(100) not null,ddate datetime,prop nvarchar(20),ts nvarchar(50),zt bit default 0, memo text)";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Dept, "CBO_Department");
+                    SqlHelper.ExecuteNonQuery(str.ToString());
+                    msg = "部门档案表插入成功";
+                }
+                else
+                {
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Dept, "CBO_Department");
+                    if (!string.IsNullOrEmpty(str.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(str.ToString());
+                        msg = "部门档案表更新成功";
+                    }
+                }
+                GetU8SVApiUrlApi("deptApi");
+                result = msg;
+            }
+            catch (Exception e)
+            {
+
+                result = "部门档案表：" + e.Message;
+            }
+            return result;
+        }
+
+
         /// <summary>
         /// 处理 Oracle SQL in 超过1000 的解决方案
         /// 创建人：lvhe
@@ -2675,6 +2753,12 @@ namespace NcDatabaseToSQL
                     webApiType = "Post";
                     webApiParam = "kehuApi";
                     break;
+                //部门接口
+                case "deptApi":
+                    webApiUrl = U8SVApiUrl + "ERPU8/DepartmentAdd";
+                    webApiType = "Post";
+                    webApiParam = "deptApi";
+                    break;
                 //批量更新产成品入库api接口
                 case "plgxccprkapi":
                     webApiUrl = U8SVApiUrl + "ERPU8/RdRecord10ItemUpdate";
@@ -2781,6 +2865,10 @@ namespace NcDatabaseToSQL
                 case "qtrkdapi":
                     msg = "销售发票接口";
                     break;
+                //部门接口
+                case "deptApi":
+                    msg = "部门档案接口";
+                    break;
                 //其他出库单接口
                 case "qtckdapi":
                     msg = "其他出库单接口";
@@ -2880,6 +2968,10 @@ namespace NcDatabaseToSQL
                 case "qtrkdapi":
                     msg = "销售发票接口";
                     break;
+                //部门接口
+                case "deptApi":
+                    msg = "部门档案接口";
+                    break;
                 //其他出库单接口
                 case "qtckdapi":
                     msg = "其他出库单接口";
@@ -2977,6 +3069,150 @@ namespace NcDatabaseToSQL
         {
             DateTime AssemblDate = Convert.ToDateTime(year + "-" + mon + "-" + "01");  // 组装当前指定月份
             return AssemblDate.AddDays(1 - AssemblDate.Day).AddMonths(1).AddDays(-1);  // 返回指定当前月份的最后一天
+        }
+        #endregion
+
+
+        #region 《单个接口执行》
+        /// <summary>
+        /// 从nc调拨单  NC 转库单数据插入到sql
+        /// 创建人：lvhe
+        /// 创建时间：2019-12-19 23:14:10
+        /// </summary>
+        /// <returns></returns>
+        [WebMethod]
+        private string GetIcWhstransHToSqlDg()
+        {
+            string result = "";
+            string createSql = "";
+            string tableExist = "";
+            int existResult = 0;
+            string msg = "";
+            string sql = "";
+            int updateCount = 0;
+            StringBuilder strbu = new StringBuilder();
+            string strGetOracleSQLIn = "";
+            try
+            {
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'TransVouch') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    //获取转库单头数据
+                    sql = "SELECT A.cspecialhid ID, A.vbillcode code, A.dbilldate ddate, A1.code cowhcode,A2.code ciwhcode,A3.code codepcode, A4.code cidepcode, A.vnote remark, CASE WHEN A.ntotalnum > 0 THEN 0 ELSE 1 END AS isRed,A.modifiedtime ts FROM ic_whstrans_h A left join bd_stordoc A1 on A1.pk_stordoc = A.cwarehouseid left join bd_stordoc A2 on A2.pk_stordoc = A.cotherwhid left join org_dept_v A3 on A3.pk_vid = A.cdptvid left join org_dept_v A4 on A4.pk_vid = A.cotherdptvid where  not exists (select cspecialhid from (select distinct pob.cspecialhid cspecialhid from ic_whstrans_b pob left join bd_material mat on mat.pk_material = pob.cmaterialvid and nvl(mat.dr,0)=0 left join ic_whstrans_h poh on poh.cspecialhid = pob.cspecialhid and nvl(poh.dr,0)=0 where  nvl(pob.dr,0)=0 and substr(mat.code,0,4) = '0915' and poh.PK_ORG='0001A110000000001V70'  AND substr(poh.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and poh.fbillflag=4) po  where po.cspecialhid = A.cspecialhid) and  A.PK_ORG='0001A110000000001V70'  AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag=4 and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                }
+                else
+                {
+                    string delstr = "delete from TransVouch where id in(select ID from TransVouch where zt != 1 )";
+                    string delstr2 = "delete from TransVouchs where id in(select ID from TransVouch where zt != 1 )";
+                    SqlHelper.ExecuteNonQuerys(delstr2);
+                    SqlHelper.ExecuteNonQuerys(delstr);
+                    string str = "select id from TransVouch";
+                    DataSet ds = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, str);
+                    if (ds.Tables[0].Rows.Count > 0)
+                    {
+                        updateCount = ds.Tables[0].Rows.Count;
+                        foreach (DataRow dr in ds.Tables[0].Rows)
+                        {
+                            strbu.Append(dr["id"].ToString() + ",");
+                        }
+                        strbu = strbu.Remove(strbu.Length - 1, 1);
+                        String[] ids = strbu.ToString().Split(',');
+                        strGetOracleSQLIn = getOracleSQLIn(ids, "A.cspecialhid");
+                        //获取采购入库头数据
+                        sql = "SELECT A.cspecialhid ID, A.vbillcode code, A.dbilldate ddate, A1.code cowhcode,A2.code ciwhcode,A3.code codepcode, A4.code cidepcode, A.vnote remark, CASE WHEN A.ntotalnum > 0 THEN 0 ELSE 1 END AS isRed,A.modifiedtime ts FROM ic_whstrans_h A left join bd_stordoc A1 on A1.pk_stordoc = A.cwarehouseid left join bd_stordoc A2 on A2.pk_stordoc = A.cotherwhid left join org_dept_v A3 on A3.pk_vid = A.cdptvid left join org_dept_v A4 on A4.pk_vid = A.cotherdptvid where  not exists (select cspecialhid from (select distinct pob.cspecialhid cspecialhid from ic_whstrans_b pob left join bd_material mat on mat.pk_material = pob.cmaterialvid and nvl(mat.dr,0)=0 left join ic_whstrans_h poh on poh.cspecialhid = pob.cspecialhid and nvl(poh.dr,0)=0 where  nvl(pob.dr,0)=0 and substr(mat.code,0,4) = '0915' and poh.PK_ORG='0001A110000000001V70'  AND substr(poh.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and poh.fbillflag=4) po  where po.cspecialhid = A.cspecialhid) and  A.PK_ORG='0001A110000000001V70'  AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag=4 and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
+                    }
+                    else
+                    {
+                        updateCount = 0;
+                        sql = "SELECT A.cspecialhid ID, A.vbillcode code, A.dbilldate ddate, A1.code cowhcode,A2.code ciwhcode,A3.code codepcode, A4.code cidepcode, A.vnote remark, CASE WHEN A.ntotalnum > 0 THEN 0 ELSE 1 END AS isRed,A.modifiedtime ts FROM ic_whstrans_h A left join bd_stordoc A1 on A1.pk_stordoc = A.cwarehouseid left join bd_stordoc A2 on A2.pk_stordoc = A.cotherwhid left join org_dept_v A3 on A3.pk_vid = A.cdptvid left join org_dept_v A4 on A4.pk_vid = A.cotherdptvid where  not exists (select cspecialhid from (select distinct pob.cspecialhid cspecialhid from ic_whstrans_b pob left join bd_material mat on mat.pk_material = pob.cmaterialvid and nvl(mat.dr,0)=0 left join ic_whstrans_h poh on poh.cspecialhid = pob.cspecialhid and nvl(poh.dr,0)=0 where  nvl(pob.dr,0)=0 and substr(mat.code,0,4) = '0915' and poh.PK_ORG='0001A110000000001V70'  AND substr(poh.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and poh.fbillflag=4) po  where po.cspecialhid = A.cspecialhid) and  A.PK_ORG='0001A110000000001V70'  AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag=4 and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                    }
+                }
+                DataSet IcWhstransH = OracleHelper.ExecuteDataset(sql);
+
+                tableExist = "if object_id( 'TransVouchs') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    //获取转库单行数据
+                    sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass,A3.name cinvclassname, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                }
+                else
+                {
+                    if (updateCount > 0)
+                    {
+                        sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass,A3.name cinvclassname, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY') and " + strGetOracleSQLIn + "";
+                    }
+                    else
+                    {
+                        sql = "SELECT A.cspecialhid ID,A1.cspecialbid autoid,A1.crowno doclineno,A2.code cinvcode, A2.name cinvname, A3.code cinvclass,A3.name cinvclassname, A2.materialspec cinvstd,A4.code cinvUnit,NVL(A1.nassistnum ,0) qty, A1.vnotebody remark FROM ic_whstrans_h A left join ic_whstrans_b A1 on A1.cspecialhid = A.cspecialhid and A1.dr != 1 left join bd_material A2 on A1.cmaterialvid = A2.pk_material left join bd_marbasclass A3 ON A2.PK_MARBASCLASS = A3.PK_MARBASCLASS left join bd_measdoc A4 on A2.PK_MEASDOC = A4.pk_measdoc where A.PK_ORG = '0001A110000000001V70' AND substr(A.dbilldate,0,10) between '" + startTime + "' and '" + endTime + "' and A.fbillflag = 4 and substr(A2.code,0,4) != '0915' and A.cwarehouseid not in('1001A1100000000T5S5Z','1001A11000000003CYSY')  and A.cotherwhid  not in('1001A1100000000T5S5Z','1001A11000000003CYSY')";
+                    }
+                }
+                DataSet IcWhstransHLine = OracleHelper.ExecuteDataset(sql);
+
+                //判断当前表是否存在 1存在 0 不存在
+                tableExist = "if object_id( 'TransVouch') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table TransVouch(ID nvarchar(30) primary key not null,code nvarchar(50),ddate nvarchar(20),cowhcode nvarchar(100),ciwhcode nvarchar(100),codepcode nvarchar(50),cidepcode nvarchar(50),remark nvarchar(100),isRed bit default 0,ts nvarchar(50),zt bit default 0,memo text)";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(IcWhstransH, "TransVouch");
+                    SqlHelper.ExecuteNonQuery(str.ToString());
+                    msg = "转库单表插入成功";
+                }
+                else
+                {
+                    StringBuilder str = DataSetToArrayList.DataSetToArrayLists(IcWhstransH, "TransVouch");
+                    if (!string.IsNullOrEmpty(str.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(str.ToString());
+                        msg = "转库单表更新成功";
+                    }
+                    else
+                    {
+                        msg = "转库单表暂无可更新数据";
+                    }
+                }
+                tableExist = "if object_id( 'TransVouchs') is not null select 1 else select 0";
+                existResult = SqlHelper.ExecuteNonQuerys(tableExist);
+
+                if (existResult == 0)
+                {
+                    createSql = "create table TransVouchs(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),cinvname nvarchar(500),cinvclass nvarchar(500),cinvclassname nvarchar(500),cinvstd nvarchar(500),cinvUnit  nvarchar(500),qty decimal(28,8),remark nvarchar(100))";
+                    SqlHelper.ExecuteNonQuery(createSql);
+                    StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(IcWhstransHLine, "TransVouchs");
+                    SqlHelper.ExecuteNonQuery(strs.ToString());
+                    msg = "转库单表行插入成功";
+                }
+                else
+                {
+                    StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(IcWhstransHLine, "TransVouchs");
+                    if (!string.IsNullOrEmpty(strs.ToString()))
+                    {
+                        SqlHelper.ExecuteNonQuery(strs.ToString());
+                        msg = "转库单表行更新成功";
+                    }
+                    else
+                    {
+                        msg = "转库单表暂无可更新数据";
+                    }
+
+                }
+                GetU8SVApiUrlApi("dbdapi");
+                result = msg;
+            }
+            catch (Exception e)
+            {
+
+                result = "转库单表错误：" + e.Message;
+            }
+            return result;
+
         }
         #endregion
 
