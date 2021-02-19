@@ -2324,13 +2324,13 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取物料档案数据
-                    sql = "select code,name from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material where  A1.pk_org='0001A110000000001V70'";
+                    sql = "select A.code,A.name,A2.code cinvccode from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material left join bd_marbasclass A2 on A2.pk_marbasclass = A.pk_marbasclass where A1.pk_org = '0001A110000000001V70'";
                 }
                 else
                 {
                     string delstr = "delete from CBO_Inventory";
                     SqlHelper.ExecuteNonQuerys(delstr);
-                    sql = "select code,name from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material where  A1.pk_org='0001A110000000001V70'";
+                    sql = "select A.code,A.name,A2.code cinvccode from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material left join bd_marbasclass A2 on A2.pk_marbasclass = A.pk_marbasclass where A1.pk_org = '0001A110000000001V70'";
                 }
                 DataSet Inventory = OracleHelper.ExecuteDataset(sql);
 
@@ -2340,7 +2340,7 @@ namespace NcDatabaseToSQL
 
                 if (existResult == 0)
                 {
-                    createSql = "create table CBO_Inventory(code nvarchar(500),name nvarchar(500))";
+                    createSql = "create table CBO_Inventory(code nvarchar(500),name nvarchar(500),cinvccode nvarchar(50))";
                     SqlHelper.ExecuteNonQuery(createSql);
                     StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Inventory, "CBO_Inventory");
                     SqlHelper.ExecuteNonQuery(str.ToString());
@@ -2550,13 +2550,13 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取部门档案数据
-                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1";
+                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1 and enablestate=2";
                 }
                 else
                 {
                     string delstr = "delete from CBO_Department";
                     SqlHelper.ExecuteNonQuerys(delstr);
-                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1";
+                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1 and enablestate=2";
                 }
                 DataSet Dept = OracleHelper.ExecuteDataset(sql);
 
