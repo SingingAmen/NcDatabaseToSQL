@@ -2550,13 +2550,13 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取部门档案数据
-                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1 and enablestate=2";
+                    sql = "select distinct A.code,A.name,A.creationtime ddate, A1.name prop, A.modifiedtime ts  from org_dept A left join bd_defdoc A1  on A1.pk_defdoc = A.deptlevel WHERE A.pk_org = '0001A110000000001V70' AND A.dr != 1 and A.enablestate = 2";
                 }
                 else
                 {
                     string delstr = "delete from CBO_Department";
                     SqlHelper.ExecuteNonQuerys(delstr);
-                    sql = "select code,name,creationtime ddate,modifiedtime ts from org_dept WHERE pk_org='0001A110000000001V70' AND dr!=1 and enablestate=2";
+                    sql = "select distinct A.code,A.name,A.creationtime ddate, A1.name prop, A.modifiedtime ts  from org_dept A left join bd_defdoc A1  on A1.pk_defdoc = A.deptlevel WHERE A.pk_org = '0001A110000000001V70' AND A.dr != 1 and A.enablestate = 2";
                 }
                 DataSet Dept = OracleHelper.ExecuteDataset(sql);
 
