@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,13 +21,16 @@ namespace NcDatabaseToSQL
 		string startTime = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddMonths(-1).ToString("yyyy-MM-dd");
 		//结束时间
 		string endTime = DateTime.Now.AddDays(1 - DateTime.Now.Day).AddDays(-1).ToString("yyyy-MM-dd");
-		private static string connectionString = ConfigurationManager.ConnectionStrings["U8DataConn"].ToString();
+		private static string connectionString = ConfigurationManager.ConnectionStrings["U8ConnBluk"].ToString();
 		private static string u8SVApiUrl = ConfigurationManager.ConnectionStrings["U8SVApiUrl"].ToString();
 
 		string msg = "";
 		public string NcDatabaseToSQL()
 		{
-			DateTime t1 = DateTime.Now;
+			Stopwatch stopwatch = new Stopwatch();
+			// 开始监视代码运行时间
+			stopwatch.Start();
+			//采购入库
 			msg = GetPurchaseinToSql() + "/";
 			//GetU8SVApiUrlApi("cgrkapi");
 			//材料出库
@@ -59,7 +63,14 @@ namespace NcDatabaseToSQL
 			DateTime t2 = DateTime.Now;
 
 			//GetU8SVApiUrlApi();
-			string ss = t1.ToString() + t2.ToString();
+			stopwatch.Stop(); // 停止监视
+			TimeSpan timespan = stopwatch.Elapsed; // 获取当前实例测量得出的总时间
+			double hours = timespan.TotalHours; // 总小时
+			double minutes = timespan.TotalMinutes; // 总分钟
+			double seconds = timespan.TotalSeconds; // 总秒数
+			double milliseconds = timespan.TotalMilliseconds; // 总毫秒数
+
+			msg = "执行时间:" + (seconds.ToString()) + "--" + msg;
 
 			return msg;
 		}
@@ -364,7 +375,7 @@ namespace NcDatabaseToSQL
 
 				if (existResult == 0)
 				{
-					createSql = "create table RdRecords11(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(50),cinvname nvarchar(50),cinvclass nvarchar(50),cinvclassname nvarchar(50),cinvstd nvarchar(50),cinvUnit nvarchar(50),qty decimal(28, 8),remark nvarchar(100))";
+					createSql = "create table RdRecords11(ID nvarchar(30),autoid nvarchar(30)  primary key not null,doclineno nvarchar(50),cinvcode nvarchar(max),cinvname nvarchar(max),cinvclass nvarchar(max),cinvclassname nvarchar(max),cinvstd nvarchar(max),cinvUnit nvarchar(max),qty decimal(28, 8),remark nvarchar(max))";
 					SqlHelper.ExecuteNonQuery(createSql);
 					//StringBuilder strs = DataSetToArrayList.DataSetToArrayLists(MaterialLine, "RdRecords11");
 					//SqlHelper.ExecuteNonQuery(strs.ToString());
