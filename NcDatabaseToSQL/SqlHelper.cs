@@ -13,26 +13,34 @@ namespace ERP8.Common
     /// </summary>
     public static class SqlHelper
     {
-        private static string connectionString = ConfigurationManager.ConnectionStrings["U8Conn"].ToString();
-        #region private utility methods & constructors
+		/// <summary>
+		/// 中间表正式环境
+		/// </summary>
+        //private static string connectionString = ConfigurationManager.ConnectionStrings["U8Conn"].ToString();
 
-        // Since this class provides only static methods, make the default constructor private to prevent 
-        // instances from being created with "new SqlHelper()"
-        //private static SqlHelper() { }
+		/// <summary>
+		/// 中间表测试环境
+		/// </summary>
+		private static string connectionString = ConfigurationManager.ConnectionStrings["U8ConnBluk"].ToString();
+		#region private utility methods & constructors
 
-        /// <summary>
-        /// This method is used to attach array of SqlParameters to a SqlCommand.
-        /// 
-        /// This method will assign a value of DbNull to any parameter with a direction of
-        /// InputOutput and a value of null.  
-        /// 
-        /// This behavior will prevent default values from being used, but
-        /// this will be the less common case than an intended pure output parameter (derived as InputOutput)
-        /// where the user provided no input value.
-        /// </summary>
-        /// <param name="command">The command to which the parameters will be added</param>
-        /// <param name="commandParameters">An array of SqlParameters to be added to command</param>
-        private static void AttachParameters(SqlCommand command, SqlParameter[] commandParameters)
+		// Since this class provides only static methods, make the default constructor private to prevent 
+		// instances from being created with "new SqlHelper()"
+		//private static SqlHelper() { }
+
+		/// <summary>
+		/// This method is used to attach array of SqlParameters to a SqlCommand.
+		/// 
+		/// This method will assign a value of DbNull to any parameter with a direction of
+		/// InputOutput and a value of null.  
+		/// 
+		/// This behavior will prevent default values from being used, but
+		/// this will be the less common case than an intended pure output parameter (derived as InputOutput)
+		/// where the user provided no input value.
+		/// </summary>
+		/// <param name="command">The command to which the parameters will be added</param>
+		/// <param name="commandParameters">An array of SqlParameters to be added to command</param>
+		private static void AttachParameters(SqlCommand command, SqlParameter[] commandParameters)
         {
             if (command == null) throw new ArgumentNullException("command");
             if (commandParameters != null)
