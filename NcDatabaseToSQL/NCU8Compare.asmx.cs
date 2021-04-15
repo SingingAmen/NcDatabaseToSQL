@@ -95,7 +95,51 @@ namespace NcDatabaseToSQL
 				if (dataType == "采购入库")
 				{
 					GetPurchaseinToSql();
+					msg = Ncu8CompareForCgrk();
 				}
+				if (dataType == "销售出库")
+				{
+					DeleteSplData();
+					GetDispatchListToSql();
+					msg = Ncu8CompareForXsck();
+				}
+				if (dataType == "调拨单")
+				{
+					DeleteSplData();
+					GetWhstransToSql();
+					msg = Ncu8CompareForZkrk();
+				}
+				if (dataType == "材料出库")
+				{
+					DeleteSplData();
+					GetMaterialToSql();
+					msg = Ncu8CompareForClck();
+				}
+				if (dataType == "产成品入库")
+				{
+					DeleteSplData();
+					GetFinprodInToSql();
+					msg = Ncu8CompareForCcprk();
+				}
+				if (dataType == "其他出库单")
+				{
+					DeleteSplData();
+					GetGeneraloutToSql();
+					msg = Ncu8CompareForQtck();
+				}
+				if (dataType == "其他入库单")
+				{
+					DeleteSplData();
+					GetGeneralinToSql();
+					msg = Ncu8CompareForQtrk();
+				}
+				if (dataType == "形态转换单")
+				{
+					DeleteSplData();
+					GetTransformToSql();
+					msg = Ncu8CompareForXtzh();
+				}
+
 				if (dataType == "采购发票")
 				{
 					GetPurBillVouchToSql();
@@ -914,7 +958,7 @@ namespace NcDatabaseToSQL
 
 		#region <<数据对比拆分>>
 		/// <summary>
-		/// NcU8数据比对
+		/// 采购入库对比
 		/// 创建人：lvhe
 		/// 创建时间：2020年3月6日 15:51:13
 		/// </summary>
@@ -934,6 +978,238 @@ namespace NcDatabaseToSQL
 				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '采购入库') and cbustype = '采购入库' ";
 				sql += " union all ";
 				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '采购入库') and cbustype = '采购入库'  ";
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+
+		/// <summary>
+		/// 销售出库对比
+		/// </summary>
+		/// <returns></returns>
+		private string Ncu8CompareForXsck()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//销售出库
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '销售出库') and cbustype = '销售出库' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '销售出库') and cbustype = '销售出库'  ";
+
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+
+		/// <summary>
+		/// 转库入库对比
+		/// </summary>
+		/// <returns></returns>
+		private string Ncu8CompareForZkrk()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//转库入库
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '调拨单') and cbustype = '调拨单' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '调拨单') and cbustype = '调拨单'  ";
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+		/// <summary>
+		/// 其他出库对比
+		/// </summary>
+		/// <returns></returns>
+		private string Ncu8CompareForQtck()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//其他出库单
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '其他出库单') and cbustype = '其他出库单' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '其他出库单') and cbustype = '其他出库单'  ";
+
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+
+
+		/// <summary>
+		/// 其他入库单对比
+		/// </summary>
+		/// <returns></returns>
+		private string Ncu8CompareForQtrk()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//其他入库单
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '其他入库单') and cbustype = '其他入库单' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '其他入库单') and cbustype = '其他入库单'  ";
+
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+
+		/// <summary>
+		/// 形态转换单对比
+		/// </summary>
+		/// <returns></returns>
+		private string Ncu8CompareForXtzh()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//形态转换单
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '形态转换单') and cbustype = '形态转换单' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '形态转换单') and cbustype = '形态转换单'  ";
+
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+		/// <summary>
+		/// 材料出库
+		/// </summary>
+		/// <returns></returns>
+		private string Ncu8CompareForClck()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//材料出库
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '材料出库') and cbustype = '材料出库' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '材料出库') and cbustype = '材料出库'  ";
+
+				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
+				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
+				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
+
+				SqlBulkCopyHelperForApps.ImportTempTableDataIndex(ncu8compareDs, "Spl_NCU8Compare");
+			}
+			catch (Exception e)
+			{
+				msg = "数据对比失败：" + e.Message;
+			}
+			return msg;
+		}
+
+
+		private string Ncu8CompareForCcprk()
+		{
+			string msg = "";
+			string sql = "";
+			string sql2 = "";
+			try
+			{
+				string delstrApps = "delete from  Spl_NCU8Compare where cbustype!='采购发票' and cbustype!='销售发票'";
+				SqlHelperForApps.ExecuteNonQuerys(delstrApps);
+				sql = " select isnull(A.cbustype,A1.cbustype) cbustype,isnull(A.cinvcode,A1.cinvcode) cInvCode,isnull(A.iquantity,0) iQuantity,isnull(A1.iquantity,0) nciQuantity,isnull(A.publicsec1,A1.publicsec1) publicsec1,isnull(A.publicsec2,A1.publicsec2) publicsec2,isnull(A.publicsec3,A1.publicsec3) publicsec3,isnull(A.publicsec4,A1.publicsec4) publicsec4,isnull(A.docno,0) publicsec8,isnull(A1.docno,0) publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] A left join [Spl_ncDBData] A1 on A.cbustype=A1.cbustype and A.cinvcode = A1.cinvcode and  A.publicsec1=A1.publicsec1 and A.docNo=A1.docno where A.cbustype!='采购发票' and A1.cbustype!='采购发票' and A.cbustype!='销售发票' and A1.cbustype!='销售发票' ";
+				//产成品入库
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,iQuantity,0 nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,docNo publicsec8,'' publicsec9,GETDATE() as CreateTime from [Spl_U8DBData] where docNo not in(select docNo from [Spl_NCDBData] where cbustype = '产成品入库') and cbustype = '产成品入库' ";
+				sql += " union all ";
+				sql += " select cbustype,cInvCode,0 iQuantity,iQuantity nciQuantity,publicsec1,publicsec2,publicsec3,publicsec4,'' publicsec8,docNo publicsec9,GETDATE() as CreateTime from [Spl_NCDBData] where docNo not in(select docNo from [Spl_U8DBData] where cbustype = '产成品入库') and cbustype = '产成品入库'  ";
+
 				DataSet ncu8compareDs = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, sql);
 				//StringBuilder strt = DataSetToArrayList.DataSetToArrayLists(ncu8compareDs, "Spl_NCU8Compare");
 				//SqlHelperForApps.ExecuteNonQuery(strt.ToString());
@@ -1083,6 +1359,17 @@ namespace NcDatabaseToSQL
 				msg = "生产领料：" + e.Message;
 			}
 			return msg;
+		}
+
+
+		private void DeleteSplData()
+		{
+			string delstr = "delete from Spl_U8DBData where cbustype != '采购发票' and cbustype != '销售发票'";
+			SqlHelper.ExecuteNonQuerys(delstr);
+
+
+			delstr = "delete from Spl_NCDBData where cbustype != '采购发票' and cbustype != '销售发票'";
+			SqlHelper.ExecuteNonQuerys(delstr);
 		}
 	}
 }
