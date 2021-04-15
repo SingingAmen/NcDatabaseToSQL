@@ -21,7 +21,7 @@ namespace ERP8.Common
 		/// <summary>
 		/// 中间表测试环境
 		/// </summary>
-		private static string connectionString = ConfigurationManager.ConnectionStrings["U8ConnBluk"].ToString();
+		private static string connectionString = ConfigurationManager.ConnectionStrings["U8Conn"].ToString();
 		#region private utility methods & constructors
 
 		// Since this class provides only static methods, make the default constructor private to prevent 
