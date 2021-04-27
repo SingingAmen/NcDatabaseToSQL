@@ -1716,10 +1716,10 @@ namespace NcDatabaseToSQL
         /// <returns>如果ds为空，返回true</returns>  
         private bool JudgeDs(DataSet ds)
         {
-            bool Flag = false;
+            bool Flag = true;
             if ((ds == null) || (ds.Tables.Count == 0) || (ds.Tables.Count == 1 && ds.Tables[0].Rows.Count == 0))
             {
-                Flag = true;
+                Flag = false;
             }
             return Flag;
         }
