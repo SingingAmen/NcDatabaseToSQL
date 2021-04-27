@@ -108,8 +108,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlBulkCopyHelper.cs" />
     <Compile Include="SqlBulkCopyHelperForApps.cs" />
+    <Compile Include="SqlBulkCopyHelperForTest.cs" />
     <Compile Include="SqlHelper.cs" />
     <Compile Include="SqlHelperForApps.cs" />
+    <Compile Include="SqlHelperForBulk.cs" />
     <Compile Include="SqlHelperForU8.cs" />
   </ItemGroup>
   <PropertyGroup>
