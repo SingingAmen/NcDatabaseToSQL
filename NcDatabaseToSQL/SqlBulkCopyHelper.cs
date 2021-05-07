@@ -195,7 +195,8 @@ namespace NcDatabaseToSQL
 				//sqlBulkCopy.EnableStreaming = true;
 				sqlBulkCopy.ColumnMappings.Add("cbustype", "cbustype");
 				sqlBulkCopy.ColumnMappings.Add("cInvCode", "cInvCode");
-				sqlBulkCopy.ColumnMappings.Add("publicsec3", "publicsec3");
+                sqlBulkCopy.ColumnMappings.Add("iQuantity", "iQuantity");
+                sqlBulkCopy.ColumnMappings.Add("publicsec3", "publicsec3");
 				sqlBulkCopy.ColumnMappings.Add("publicsec1", "publicsec1");
 				sqlBulkCopy.ColumnMappings.Add("CreateTime", "CreateTime");
 				sqlBulkCopy.DestinationTableName = $"{TempTableName}";
