@@ -495,7 +495,7 @@ namespace NcDatabaseToSQL
                     DataSet BomNew = OracleHelper.ExecuteDataset(sqlnew);
                     StringBuilder instetsql = DataSetToArrayList.DataSetToArrayLists(BomNew, "BomNew");
                     SqlHelper.ExecuteNonQuery(instetsql.ToString());
-                    string delids = "select A.id from bom as A left join BomNew A1 on A.ID = A1.ID and A.cinvcode = A1.cinvcode and A.cinvstd = A1.cinvstd and a.bomversion = a1.bomversion where A.ddate != A1.ddate";
+                    string delids = "select A.id from bom as A left join BomNew A1 on A.ID = A1.ID and A.cinvcode = A1.cinvcode and A.cinvstd = A1.cinvstd and a.bomversion = a1.bomversion where A.ddate != A1.ddate or A.ts !=A1.ts";
                     DataSet dsnew = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, delids);
                     StringBuilder strbunew = new StringBuilder();
                     if (dsnew.Tables[0].Rows.Count > 0)
@@ -2329,13 +2329,13 @@ namespace NcDatabaseToSQL
                 if (existResult == 0)
                 {
                     //获取物料档案数据
-                    sql = "select A.code,A.name,A2.code cinvccode from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material left join bd_marbasclass A2 on A2.pk_marbasclass = A.pk_marbasclass where A1.pk_org = '0001A110000000001V70'";
+                    sql = "select A.code,A.name,A2.code cinvccode,A.DEF3 cinvname from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material left join bd_marbasclass A2 on A2.pk_marbasclass = A.pk_marbasclass where A1.pk_org = '0001A110000000001V70'";
                 }
                 else
                 {
                     string delstr = "delete from CBO_Inventory";
                     SqlHelper.ExecuteNonQuerys(delstr);
-                    sql = "select A.code,A.name,A2.code cinvccode from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material left join bd_marbasclass A2 on A2.pk_marbasclass = A.pk_marbasclass where A1.pk_org = '0001A110000000001V70'";
+                    sql = "select A.code,A.name,A2.code cinvccode,A.DEF3 cinvname from bd_material A left join bd_marorg A1 on A1.pk_material = A.pk_material left join bd_marbasclass A2 on A2.pk_marbasclass = A.pk_marbasclass where A1.pk_org = '0001A110000000001V70'";
                 }
                 DataSet Inventory = OracleHelper.ExecuteDataset(sql);
 
@@ -2345,7 +2345,7 @@ namespace NcDatabaseToSQL
 
                 if (existResult == 0)
                 {
-                    createSql = "create table CBO_Inventory(code nvarchar(500),name nvarchar(500),cinvccode nvarchar(50))";
+                    createSql = "create table CBO_Inventory(code nvarchar(500),name nvarchar(500),cinvccode nvarchar(50),cinvname nvarchar(500))";
                     SqlHelper.ExecuteNonQuery(createSql);
                     //StringBuilder str = DataSetToArrayList.DataSetToArrayLists(Inventory, "CBO_Inventory");
                     //SqlHelper.ExecuteNonQuery(str.ToString());
