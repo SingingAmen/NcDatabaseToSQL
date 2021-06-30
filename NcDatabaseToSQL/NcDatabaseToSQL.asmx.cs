@@ -495,7 +495,7 @@ namespace NcDatabaseToSQL
                     DataSet BomNew = OracleHelper.ExecuteDataset(sqlnew);
                     StringBuilder instetsql = DataSetToArrayList.DataSetToArrayLists(BomNew, "BomNew");
                     SqlHelper.ExecuteNonQuery(instetsql.ToString());
-                    string delids = "select A.id from bom as A left join BomNew A1 on A.ID = A1.ID and A.cinvcode = A1.cinvcode and A.cinvstd = A1.cinvstd and a.bomversion = a1.bomversion where A.ddate != A1.ddate or A.ts !=A1.ts";
+                    string delids = "select A.id from bom as A left join BomNew A1 on A.ID = A1.ID and A.cinvcode = A1.cinvcode and a.bomversion = a1.bomversion where A.ddate != A1.ddate or A.ts !=A1.ts";
                     DataSet dsnew = SqlHelper.ExecuteDataset(connectionString, CommandType.Text, delids);
                     StringBuilder strbunew = new StringBuilder();
                     if (dsnew.Tables[0].Rows.Count > 0)
